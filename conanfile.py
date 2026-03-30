@@ -47,8 +47,8 @@ class WendfyrConan(ConanFile):
         tc.variables["CMAKE_CXX_STANDARD_REQUIRED"] = "ON"
         tc.variables["CMAKE_CXX_EXSTENSIONS"] = "OFF"
 
-        tc.variables["FC_WITH_TUI"] = self.options.with_tui
-        tc.variables["FC_WITH_GUI"] = self.options.with_gui
+        tc.variables["WF_WITH_TUI"] = self.options.with_tui
+        tc.variables["WF_WITH_GUI"] = self.options.with_gui
 
         tc.generate()
 
