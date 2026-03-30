@@ -4,80 +4,57 @@ project(
     Wendfyr
     VERSION 0.1.0
     LANGUAGES CXX
-    DESCRIPTION "A dual pane file manager"
+    DESCRIPTION "A dual-pane file manager with CLI, TUI, and GUI frontends"
     HOMEPAGE_URL "https://github.com/Grimmoroth/Wendfyr"
 )
 
 if(CMAKE_SOURCE_DIR STREQUAL CMAKE_BINARY_DIR)
     message(FATAL_ERROR
-        "In-source builds are forbidden.\n"
-        "Create a build directory: cmake -B build -S ."
+        "In-source builds are not allowed.\n"
+        "Create a build directory and run CMake from there:\n"
+        "  cmake --preset conan-debug\n"
+        "Remove CMakeCache.txt and CMakeFiles/ if they were created."
     )
-endif()
-
-if(PROJECT_IS_TOP_LEVEL)
-
-    list(APPEND CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake")
-
-    if(NOT CMAKE_BUILD_TYPE AND NOT CMAKE_CONFIGURATION_TYPES)
-        message(STATUS "No build type specified. Defaulting to Debug.")
-        set(CMAKE_BUILD_TYPE Debug CACHE STRING "Build type" FORCE)
-        set_property(
-            CACHE CMAKE_BUILD_TYPE
-            PROPERTY STRINGS "Debug" "Release" "RelWithDebInfo" "MinSizeRel"
-        )
-    endif()
-
-    option(BUILD_TESTING "Build the test suite" ON)
-    set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
-
 endif()
 
 set(CMAKE_CXX_STANDARD 23)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXSTENSIONS OFF)
 
+
+option(WF_WITH_TUI "Build the TUI frontend(requires FTXUI)" ON)
+option(WF_WITH_GUI "Build the GUI frontend(toolkit TBD)"   OFF)
+option(BUILD_TESTING "Build unit and integration testing"   ON)
+
 find_package(spdlog REQUIRED)
 find_package(nlohmann_json REQUIRED)
 find_package(CLI11 REQUIRED)
-find_package(ftxui REQUIRED)
 
-include(CompilerWarnings)
+if(WF_WITH_TUI)
+    find_package(ftxui REQUIRED)
+endif()
 
-function(wendfyr_add_library TARGET_NAME)
-    cmake_parse_arguments(
-        LIB
-        ""
-        ""
-        "SOURCES;DEPENDENCIES"
-        ${ARGN}
-    )
+#if(WF_WITH_GUI)
+#    find_package(??? REQUIRED)
+#endif()
 
-    add_library(${TARGET_NAME} STATIC ${LIB_SOURCES})
-    target_include_directories(${TARGET_NAME}
-        PUBLIC
-        $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
-        $<INSTALL_INTERFACE:include>
-    )
-
-    if(LIB_DEPENDENCIES)
-        target_link_libraries(${TARGET_NAME}
-            PUBLIC ${LIB_DEPENDENCIES}
-        )
-    endif()
-
-    target_link_libraries($(TARGET_NAME)
-        PRIVATE wendfyr_warnings
-    )
-
-endfunction()
-
-add_subdirectory(src)
-
-if(BUILD_TESTING AND PROJECT_IS_TOP_LEVEL)
-    enable_testing()
+if(BUILD_TESTING)
     find_package(GTest REQUIRED)
-    add_subdirectory(tests)
-endif
+    enable_testing()
+endif()
 
+add_subdirectory(libs/core)
+add_subdirectory(apps/cli)
+
+if(WF_WITH_TUI)
+    add_subdirectory(apps/tui)
+endif()
+
+if(WF_WITH_GUI)
+    add_subdirectory(apps/gui)
+endif()
+
+if(BUILD_TESTING)
+    add_subdirectory(tests)
+endif()
     
