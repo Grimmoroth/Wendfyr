@@ -20,6 +20,7 @@ endif()
 set(CMAKE_CXX_STANDARD 23)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXSTENSIONS OFF)
+set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
 
 option(WF_WITH_TUI "Build the TUI frontend(requires FTXUI)" ON)
@@ -42,6 +43,8 @@ if(BUILD_TESTING)
     find_package(GTest REQUIRED)
     enable_testing()
 endif()
+
+include(cmake/CompilerWarnings.cmake)
 
 add_subdirectory(libs/core)
 add_subdirectory(apps/cli)
