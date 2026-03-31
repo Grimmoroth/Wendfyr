@@ -1,0 +1,95 @@
+Checks: >
+  -*,
+  bugprone-*,
+  cppcoreguidelines-*,
+  modernize-*,
+  readability-*,
+  performance-*,
+  misc-*,
+  concurrency-*,
+  -modernize-use-trailing-return-type,
+  -readability-identifier-length,
+  -cppcoreguidelines-avoid-magic-numbers,
+  -readability-magic-numbers,
+  -readability-braces-around-statements,
+  -cppcoreguidelines-owning-memory,
+  -misc-non-private-member-variables-in-classes,
+  -modernize-use-nodiscard,
+  -cppcoreguidelines-pro-bounds-array-to-pointer-decay,
+  -bugprone-easily-swappable-parameters,
+  -readability-else-after-return,
+  -cppcoreguidelines-avoid-do-while
+
+WarningsAsErrors: '*'
+
+HeaderFilterRegex: '(include/wendfyr|src)/.*'
+
+CheckOptions:
+
+  ## Types: PascalCase
+  - key: readability-identifier-naming.ClassCase
+    value: CamelCase
+  - key: readability-identifier-naming.StructCase
+    value: CamelCase
+  - key: readability-identifier-naming.EnumCase
+    value: CamelCase
+
+  ## Abstract classes must start with I (ICommand, IFilesystemService)
+  - key: readability-identifier-naming.AbstractClassPrefix
+    value: 'I'
+
+  ## Functions and methods: camelCase
+  - key: readability-identifier-naming.FunctionCase
+    value: camelBack
+  - key: readability-identifier-naming.MethodCase
+    value: camelBack
+
+  ## Variables and parameters: lower_case
+  - key: readability-identifier-naming.VariableCase
+    value: lower_case
+  - key: readability-identifier-naming.ParameterCase
+    value: lower_case
+
+  ## Member variables: _leading_underscore
+  - key: readability-identifier-naming.MemberCase
+    value: lower_case
+  - key: readability-identifier-naming.MemberPrefix
+    value: '_'
+
+  ## Constants and constexpr: UPPER_CASE
+  - key: readability-identifier-naming.ConstantCase
+    value: UPPER_CASE
+  - key: readability-identifier-naming.ConstexprVariableCase
+    value: UPPER_CASE
+  - key: readability-identifier-naming.StaticConstantCase
+    value: UPPER_CASE
+  - key: readability-identifier-naming.GlobalConstantCase
+    value: UPPER_CASE
+
+  ## Enum values: UPPER_CASE
+  - key: readability-identifier-naming.EnumConstantCase
+    value: UPPER_CASE
+
+  ## Namespaces: lower_case
+  - key: readability-identifier-naming.NamespaceCase
+    value: lower_case
+
+  ## Template parameters: PascalCase
+  - key: readability-identifier-naming.TemplateParameterCase
+    value: CamelCase
+
+  ## Macros: UPPER_CASE
+  - key: readability-identifier-naming.MacroDefinitionCase
+    value: UPPER_CASE
+
+  ## Prefer using over typedef
+  - key: modernize-use-using.IgnoreMacros
+    value: true
+
+  ## Require override on virtual functions (Liskov enforcement)
+  - key: modernize-use-override.IgnoreDestructors
+    value: false
+
+  ## Flag move constructors missing noexcept
+  - key: performance-noexcept-move-constructor.IgnoreDestructors
+    value: false
