@@ -1,5 +1,8 @@
 set(WF_COURE_SOURCES
 
+    #Models
+    src/models/file_entry.cpp
+    
     #Domain logic
     src/domain/command_executor.cpp
     src/panel_model.cpp
