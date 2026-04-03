@@ -6,8 +6,9 @@ namespace wendfyr::services
 {
     SubscriptionId EventBus::subscribe(EventCallback callback)
     {
+        auto id = _next_id++;
         _subscribers.push_back(Subscription{id, std::move(callback)});
-        return _next_id++;
+        return id;
     }
 
     void EventBus::unsubscribe(SubscriptionId id)
