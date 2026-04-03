@@ -72,11 +72,11 @@ namespace wendfyr::domain
 
     std::string CommandExecutor::redoDescription() const
     {
-        if (!canUndo())
+        if (!canRedo())
         {
             return ""
         }
 
-        return _undo_stack.back()->description();
+        return _redo_stack.back()->description();
     }
 };  // namespace wendfyr::domain
