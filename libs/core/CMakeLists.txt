@@ -5,7 +5,8 @@ set(WF_COURE_SOURCES
     
     #Domain logic
     src/domain/command_executor.cpp
-    src/panel_model.cpp
+    src/domain/command_factory.cpp
+    src/domain/panel_model.cpp
 
     #Domain concrete commands
     src/domain/commands/copy_command.cpp
