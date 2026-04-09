@@ -19,6 +19,8 @@ set(WF_COURE_SOURCES
     #Infrastructore
     src/infrastructore/std_filesystem_service.cpp
     src/infrastructure/json_config_service.cpp
+
+    src/bootstrap.cpp
 )
 
 add_library(wendfyr_core STATIC ${WF_COURE_SOURCES})
