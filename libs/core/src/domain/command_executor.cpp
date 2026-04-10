@@ -7,7 +7,7 @@
 
 namespace wendfyr::domain
 {
-    CommandExecutor(services::EventBus& event_bus) : _event_bus{event_bus} {}
+    CommandExecutor::CommandExecutor(services::EventBus& event_bus) : _event_bus{event_bus} {}
 
     void CommandExecutor::execute(std::unique_ptr<domain::commands::ICommand> command)
     {
@@ -60,21 +60,21 @@ namespace wendfyr::domain
         return !_redo_stack.empty();
     }
 
-    std::string CommandExecutor::undoDescription() const
+    std::string CommandExecutor::undoDescription() const noexcept
     {
         if (!canUndo())
         {
-            return ""
+            return "";
         }
 
         return _undo_stack.back()->description();
     }
 
-    std::string CommandExecutor::redoDescription() const
+    std::string CommandExecutor::redoDescription() const noexcept
     {
         if (!canRedo())
         {
-            return ""
+            return "";
         }
 
         return _redo_stack.back()->description();

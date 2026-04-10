@@ -2,10 +2,8 @@
 
 #include <spdlog/spdlog.h>
 
-#include <algorithm>
 #include <cstdint>
 #include <filesystem>
-#include <system_error>
 
 namespace wendfyr::infrastructure
 {
@@ -71,12 +69,12 @@ namespace wendfyr::infrastructure
         std::filesystem::remove_all(target);
     }
 
-    void StdFilesystemService::createDirectory(const std::filesystem::path& directory_path)
+    void StdFilesystemService::createDirectory(const std::filesystem::path& directory_path) const
     {
         std::filesystem::create_directories(directory_path);
     }
 
-    bool StdFileSystemService::exist(const std::filesystem::path& target) const
+    bool StdFilesystemService::exist(const std::filesystem::path& target) const
     {
         return std::filesystem::exists(target);
     }
@@ -86,9 +84,9 @@ namespace wendfyr::infrastructure
         return std::filesystem::is_directory(target);
     }
 
-    std::uintmax_t StdFilesystemService::fileSize(const std::filesystem::path& target)
+    std::uintmax_t StdFilesystemService::fileSize(const std::filesystem::path& target) const
     {
-        return std::std::filesystem::file_size(target);
+        return std::filesystem::file_size(target);
     }
 
 }  // namespace wendfyr::infrastructure

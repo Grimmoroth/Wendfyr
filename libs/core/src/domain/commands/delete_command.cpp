@@ -12,7 +12,7 @@
 namespace wendfyr::domain::commands
 {
     DeleteCommand::DeleteCommand(std::vector<std::filesystem::path> targets,
-                                 ports::driven::IFilesystemService fs,
+                                 ports::driven::IFilesystemService& fs,
                                  services::EventBus& event_bus)
         : _targets{std::move(targets)}, _fs{fs}, _event_bus{event_bus}
     {
@@ -22,7 +22,7 @@ namespace wendfyr::domain::commands
     {
         try
         {
-            if (!_backup_directory.empty() && _fs.exists(_backup_directory))
+            if (!_backup_directory.empty() && _fs.exist(_backup_directory))
             {
                 _fs.remove(_backup_directory);
                 spdlog::debug("Cleaned up backup directory: {}", _backup_directory.string());
@@ -37,7 +37,7 @@ namespace wendfyr::domain::commands
 
     void DeleteCommand::execute()
     {
-        _backup_redords.clear();
+        _backup_records.clear();
         _backup_directory =
             std::filesystem::temp_directory_path() /
             ("wf_backup_" +
@@ -50,7 +50,7 @@ namespace wendfyr::domain::commands
             auto backup_path = _backup_directory / target.filename();
             spdlog::info("Deleting {} (backed up to {})", target.string(), backup_path.string());
             _fs.move(target, backup_path);
-            _backup_records.emplace_back(target, backup_path)
+            _backup_records.emplace_back(target, backup_path);
         }
 
         _event_bus.publish(events::FilesDeletedEvent{_targets});
@@ -59,7 +59,7 @@ namespace wendfyr::domain::commands
 
     void DeleteCommand::undo()
     {
-        for (auto it{_backup_records.rbegin()}; it != rbegin(); ++it)
+        for (auto it{_backup_records.rbegin()}; it != _backup_records.rbegin(); ++it)
         {
             const auto& [original, backup] = *it;
 
@@ -70,7 +70,7 @@ namespace wendfyr::domain::commands
             }
             else
             {
-                stdlog::warn("Undo delete: backup {} missing, cannot restore", backup.string());
+                spdlog::warn("Undo delete: backup {} missing, cannot restore", backup.string());
             }
         }
 
@@ -80,8 +80,9 @@ namespace wendfyr::domain::commands
             restored.push_back(original);
         }
 
-        _event_bus.publish(events::FilesCopiedEvent{restored, _targets.front().parent_path()});
-        spdlog::info("Undo delete complete: {} file(s) restored", _backup_records.size())
+        _event_bus.publish(events::FilesCopiedEvent{.sources = restored,
+                                                    .destination = _targets.front().parent_path()});
+        spdlog::info("Undo delete complete: {} file(s) restored", _backup_records.size());
     }
 
     std::string DeleteCommand::description() const
@@ -91,6 +92,6 @@ namespace wendfyr::domain::commands
             return "Delete : " + _targets.front().filename().string();
         }
 
-        return "Delete " + std::to_string(_targets.size()) _ " files";
+        return "Delete " + std::to_string(_targets.size()) + " files";
     }
 };  // namespace wendfyr::domain::commands

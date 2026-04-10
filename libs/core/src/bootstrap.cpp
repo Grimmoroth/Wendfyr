@@ -11,7 +11,7 @@
 namespace wendfyr
 {
     ApplicationContext::ApplicationContext(
-        std::shared_ptr<std::services::EventBus> event_bus,
+        std::shared_ptr<services::EventBus> event_bus,
         std::shared_ptr<ports::driven::IFilesystemService> fs,
         std::shared_ptr<ports::driven::IConfigService> config,
         std::unique_ptr<ports::driving::ICommandExecutor> executor,
@@ -54,8 +54,8 @@ namespace wendfyr
         spdlog::info("Wendfyr initialized. Start directory: {}", start_directory.string());
 
         return ApplicationContext{
-            std::move(event_bus),   std::move(fs),     std::move(config),
-            std::move(executor),    td::move(factory), std::move(left_panel),
+            std::move(event_bus),   std::move(fs),      std::move(config),
+            std::move(executor),    std::move(factory), std::move(left_panel),
             std::move(right_panel),
         };
     }

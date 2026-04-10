@@ -1,5 +1,6 @@
 #ifndef WENDFYR_DOMAIN_COMMANDS_MOVE_COMMAND_HPP
 #define WENDFYR_DOMAIN_COMMANDS_MOVE_COMMAND_HPP
+#include "wendfyr/domain/commands/i_command.hpp"
 
 #include <filesystem>
 #include <string>
@@ -21,7 +22,7 @@ namespace wendfyr::domain::commands
     class MoveCommand final : public ICommand
     {
       public:
-        MoveCommand(std::filesystem::path sources, std::filesystem::path destination,
+        MoveCommand(std::vector<std::filesystem::path> sources, std::filesystem::path destination,
                     ports::driven::IFilesystemService& fs, services::EventBus& event_bus);
 
         void execute() override;
@@ -31,10 +32,10 @@ namespace wendfyr::domain::commands
       private:
         std::vector<std::filesystem::path> _sources;
         std::filesystem::path _destination;
-        std::vector<std::pair<std::filesystem::path, std::filesystem::path>> _moved_redords;
+        std::vector<std::pair<std::filesystem::path, std::filesystem::path>> _moved_records;
 
         ports::driven::IFilesystemService& _fs;
-        services::EventBus& event_bus;
+        services::EventBus& _event_bus;
     };
 };  // namespace wendfyr::domain::commands
 

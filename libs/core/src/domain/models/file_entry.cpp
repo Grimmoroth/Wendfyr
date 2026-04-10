@@ -1,4 +1,4 @@
-#include "wyndfyr/domain/models/file_entry.hpp"
+#include "wendfyr/domain/models/file_entry.hpp"
 
 namespace wendfyr::domain::models
 {

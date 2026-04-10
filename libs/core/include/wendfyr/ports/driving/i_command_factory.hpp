@@ -13,7 +13,6 @@ namespace wendfyr::ports::driving
     {
       public:
         virtual ~ICommandFactory();
-
         [[nodiscard]] virtual std::unique_ptr<domain::commands::ICommand> createCopyCommand(
             std::vector<std::filesystem::path> sources, std::filesystem::path destination) = 0;
         [[nodiscard]] virtual std::unique_ptr<domain::commands::ICommand> createMoveCommand(

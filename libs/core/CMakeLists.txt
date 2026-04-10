@@ -1,7 +1,7 @@
-set(WF_COURE_SOURCES
+set(WF_CORE_SOURCES
 
     #Models
-    src/models/file_entry.cpp
+    src/domain/models/file_entry.cpp
     
     #Domain logic
     src/domain/command_executor.cpp
@@ -13,17 +13,29 @@ set(WF_COURE_SOURCES
     src/domain/commands/delete_command.cpp
     src/domain/commands/move_command.cpp
 
+    src/domain/command_factory.cpp
+
     #Services
-    src/domain/services/event_bus.cpp
+    src/services/event_bus.cpp
 
     #Infrastructore
-    src/infrastructore/std_filesystem_service.cpp
+    src/infrastructure/std_filesystem_service.cpp
     src/infrastructure/json_config_service.cpp
-
+    
+    #misc
     src/bootstrap.cpp
+
+    #vtable anchors for the interfaces
+    src/domain/commands/i_command.cpp
+    src/ports/driving/i_command_executor.cpp
+    src/ports/driving/i_command_factory.cpp
+    src/ports/driving/i_panel_model.cpp
+    src/ports/driven/i_filesystem_service.cpp
+    src/ports/driven/i_config_service.cpp
+
 )
 
-add_library(wendfyr_core STATIC ${WF_COURE_SOURCES})
+add_library(wendfyr_core STATIC ${WF_CORE_SOURCES})
 
 target_include_directories(wendfyr_core
     PUBLIC

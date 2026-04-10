@@ -14,12 +14,12 @@ namespace wendfyr::services
     void EventBus::unsubscribe(SubscriptionId id)
     {
         auto it{std::remove_if(_subscribers.begin(), _subscribers.end(),
-                               [](const Subscription& sub) { return sub.id == id; })};
+                               [id](const Subscription& sub) { return sub.id == id; })};
 
         _subscribers.erase(it, _subscribers.end());
     }
 
-    void EventBus::publish(const domain::events::Event& event)
+    void EventBus::publish(const domain::events::Event& event) const
     {
         for (const auto& sub : _subscribers)
         {
@@ -27,8 +27,8 @@ namespace wendfyr::services
         }
     }
 
-    std::size_t subscriberCount() const noexcept
+    std::size_t EventBus::subscriberCount() const noexcept
     {
-        return _subsribers.size();
+        return _subscribers.size();
     }
 };  // namespace wendfyr::services

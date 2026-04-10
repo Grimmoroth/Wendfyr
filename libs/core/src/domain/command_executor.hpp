@@ -17,8 +17,8 @@ namespace wendfyr::domain
     class CommandExecutor final : public ports::driving::ICommandExecutor
     {
       public:
-        explicit CommandExecutor(EventBus& event_bus);
-        void execute(std::unique<commands::ICommand> command) override;
+        explicit CommandExecutor(services::EventBus& event_bus);
+        void execute(std::unique_ptr<commands::ICommand> command) override;
         void undo() override;
         void redo() override;
         [[nodiscard]] bool canUndo() const noexcept override;
@@ -29,7 +29,7 @@ namespace wendfyr::domain
       private:
         std::vector<std::unique_ptr<commands::ICommand>> _undo_stack;
         std::vector<std::unique_ptr<commands::ICommand>> _redo_stack;
-        services::EventBus& event_bus;
+        services::EventBus& _event_bus;
     };
 };  // namespace wendfyr::domain
 

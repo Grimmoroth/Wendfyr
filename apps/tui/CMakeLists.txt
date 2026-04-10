@@ -7,7 +7,7 @@ target_link_libraries(wf_tui
         Wendfyr::Core
         ftxui::screen
         ftxui::dom
-        ftxui::components
+        ftxui::component
         wf_warnings
 )
 

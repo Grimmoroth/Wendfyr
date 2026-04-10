@@ -1,5 +1,5 @@
 from conan import ConanFile
-from conan.tool.cmake import CMakeToolChain,CMakeDeps, cmake_layout
+from conan.tools.cmake import CMakeToolchain,CMakeDeps, cmake_layout
 
 
 class WendfyrConan(ConanFile):
@@ -23,7 +23,7 @@ class WendfyrConan(ConanFile):
 
     def requirements(self):
         self.requires("spdlog/1.15.0")
-        self.requires("nlohmann/json/3.11.3")
+        self.requires("nlohmann_json/3.12.0")
 
         self.requires("cli11/2.4.2")
 
@@ -34,14 +34,14 @@ class WendfyrConan(ConanFile):
         #    self.requires("???")
 
     def build_requirements(self):
-        self.test_requires("gtest/1.15.2")
+        self.test_requires("gtest/1.17.0")
 
     
     def layout(self):
         cmake_layout(self)
 
     def generate(self):
-        tc = CMakeToolChain(self)
+        tc = CMakeToolchain(self)
 
         tc.variables["CMAKE_CXX_STANDARD"] = 23
         tc.variables["CMAKE_CXX_STANDARD_REQUIRED"] = "ON"

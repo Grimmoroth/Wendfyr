@@ -25,7 +25,7 @@ namespace wendfyr::domain::commands
     {
       public:
         DeleteCommand(std::vector<std::filesystem::path> targets,
-                      ports::driven::IFilesystemService& fs, servies::EventBus& event_bus);
+                      ports::driven::IFilesystemService& fs, services::EventBus& event_bus);
         DeleteCommand(DeleteCommand&) = delete;
         DeleteCommand& operator=(DeleteCommand&) = delete;
         DeleteCommand(DeleteCommand&&) noexcept = default;

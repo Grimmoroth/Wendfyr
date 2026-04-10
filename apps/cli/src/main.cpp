@@ -22,9 +22,9 @@ int main()
         for (const auto& entry : entries)
         {
             std::string type_marker;
-            if (entry.type == wenfyr::domain::models::EntryType::DIRECTORY)
+            if (entry.type == wendfyr::domain::models::EntryType::DIRECTORY)
             {
-                type_maker = "[DIR]";
+                type_marker = "[DIR]";
             }
             else if (entry.type == wendfyr::domain::models::EntryType::SYMLINK)
             {
@@ -34,10 +34,10 @@ int main()
             {
                 type_marker = "       ";
             }
-            std::cout << type_marker << entry.name();
+            std::cout << type_marker << entry.name;
             if (entry.type == wendfyr::domain::models::EntryType::FILE)
             {
-                std::cout << " (" << entry.size() << " bytes)";
+                std::cout << " (" << entry.size << " bytes)";
             }
 
             std::cout << '\n';

@@ -4,15 +4,14 @@
 #include "wendfyr/domain/models/file_entry.hpp"
 
 #include <filesystem>
-#include <string>
 #include <vector>
 
 namespace wendfyr::ports::driven
 {
-    class IFileSystemService
+    class IFilesystemService
     {
       public:
-        virtual ~IFileSystemService() = default;
+        virtual ~IFilesystemService();
         [[nodiscard]] virtual std::vector<domain::models::FileEntry> listDirectory(
             const std::filesystem::path& dir_path) const = 0;
 
@@ -32,11 +31,11 @@ namespace wendfyr::ports::driven
             const std::filesystem::path& target) const = 0;
 
       protected:
-        IFileSystemService() = default;
-        IFileSystemService(const IFileSystemService&) = default;
-        IFileSystemService(IFileSystemService&&) = default;
-        IFileSystemService& operator=(const IFileSystemService&) = default;
-        IFileSystemService& operator=(IFileSystemService&&) = default;
+        IFilesystemService() = default;
+        IFilesystemService(const IFilesystemService&) = default;
+        IFilesystemService(IFilesystemService&&) = default;
+        IFilesystemService& operator=(const IFilesystemService&) = default;
+        IFilesystemService& operator=(IFilesystemService&&) = default;
     };
 };  // namespace wendfyr::ports::driven
 

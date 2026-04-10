@@ -21,7 +21,7 @@ namespace wendfyr::infrastructure
 
       private:
         [[nodiscard]] const nlohmann::json* navigateTo(const std::string& key) const;
-        [[nodiscard]] nlohman::json& navigateOrCreate(const std::string& key);
+        [[nodiscard]] nlohmann::json& navigateOrCreate(const std::string& key);
 
         std::filesystem::path _config_file_path;
         nlohmann::json _data;

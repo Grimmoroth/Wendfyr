@@ -10,8 +10,7 @@ namespace wendfyr::ports::driven
     class IConfigService
     {
       public:
-        virtual ~IConfigService() = default;
-
+        virtual ~IConfigService();
         [[nodiscard]] virtual std::optional<std::string> getString(
             const std::string& key) const = 0;
         virtual void setString(const std::string& key, const std::string& value) = 0;

@@ -21,46 +21,46 @@ namespace wendfyr::domain::commands
 
     void MoveCommand::execute()
     {
-        _move_records.clear();
+        _moved_records.clear();
         for (const auto& source : _sources)
         {
             auto target = _destination / source.filename();
             spdlog::info("Moving {} -> {}", source.string(), target.string());
             _fs.move(source, target);
-            _move_records.emplace_back(source, target);
+            _moved_records.emplace_back(source, target);
         }
 
         _event_bus.publish(events::FilesMovedEvent{_sources, _destination});
-        spdlog::info("Move complete: {} file(s) to {} ", _sources.string(), _destination.string());
+        spdlog::info("Move complete: {} file(s) to {} ", _sources.size(), _destination.string());
     }
 
     void MoveCommand::undo()
     {
-        for (auto it{_move_records.rbegin()}; it != _move_records.rend(); ++it)
+        for (auto it{_moved_records.rbegin()}; it != _moved_records.rend(); ++it)
         {
             auto [original, moved] = *it;
-            if (_fs.exists(moved))
+            if (_fs.exist(moved))
             {
                 spdlog::info("Undo move: {} -> {}", moved.string(), original.string());
                 _fs.move(moved, original);
             }
             else
             {
-                stdlog::warn("Undo move: {} already gone, skipping.", moved.string());
+                spdlog::warn("Undo move: {} already gone, skipping.", moved.string());
             }
         }
 
         std::vector<std::filesystem::path> moved_back;
         for (const auto& [original, moved] : _moved_records)
         {
-            _moved_back.push_back(original);
+            moved_back.push_back(original);
         }
 
-        event.publish(events::FileMovedEvent{moved_back, _sources.front().parent_path()});
-        spdlog::info("Undo move complete: {} file(s) restored", _move_records.size());
+        _event_bus.publish(events::FilesMovedEvent{moved_back, _sources.front().parent_path()});
+        spdlog::info("Undo move complete: {} file(s) restored", _moved_records.size());
     }
 
-    std::string description() const
+    std::string MoveCommand::description() const
     {
         if (_sources.size() == 1)
         {
@@ -68,7 +68,7 @@ namespace wendfyr::domain::commands
         }
         else
         {
-            "Move " + std::to_string(sources.size()) + " files to " + _destination.string();
+            return "Move " + std::to_string(_sources.size()) + " files to " + _destination.string();
         }
     }
 };  // namespace wendfyr::domain::commands

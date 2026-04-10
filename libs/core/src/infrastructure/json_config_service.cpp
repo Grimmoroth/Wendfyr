@@ -11,7 +11,7 @@
 namespace wendfyr::infrastructure
 {
     JsonConfigService::JsonConfigService(std::filesystem::path config_file_path)
-        : _config_file_path{std::move(config_path)}
+        : _config_file_path{std::move(config_file_path)}
     {
     }
 
@@ -19,7 +19,7 @@ namespace wendfyr::infrastructure
     {
         if (!std::filesystem::exists(_config_file_path))
         {
-            stdlog::info("Config file not found at {}, using defaults", _config_file_path.string());
+            spdlog::info("Config file not found at {}, using defaults", _config_file_path.string());
             _data = nlohmann::json::object();
             return;
         }
@@ -31,7 +31,7 @@ namespace wendfyr::infrastructure
             {
                 spdlog::warn("Cannot oppen config file {}, using defaults",
                              _config_file_path.string());
-                data = nlohmann::json::object();
+                _data = nlohmann::json::object();
                 return;
             }
 
@@ -70,7 +70,7 @@ namespace wendfyr::infrastructure
     std::optional<std::string> JsonConfigService::getString(const std::string& key) const
     {
         const auto* node = navigateTo(key);
-        if (node == nullptr || !node->is_string(key))
+        if (node == nullptr || !node->is_string())
         {
             return std::nullopt;
         }
@@ -84,7 +84,7 @@ namespace wendfyr::infrastructure
         target = value;
     }
 
-    bool JsonConfigService::hasKey(const std::string& key)
+    bool JsonConfigService::hasKey(const std::string& key) const
     {
         return navigateTo(key) != nullptr;
     }
@@ -106,11 +106,11 @@ namespace wendfyr::infrastructure
         return current;
     }
 
-    nlhoman::json& JsonConfigService::navigateOrCreate(const std::string& key)
+    nlohmann::json& JsonConfigService::navigateOrCreate(const std::string& key)
     {
-        nlohman::json* current = &_data;
+        nlohmann::json* current = &_data;
         std::istringstream stream(key);
-        std::string last_segment;
+        std::string segment;
 
         std::vector<std::string> segments;
         while (std::getline(stream, segment, '.'))
@@ -128,7 +128,7 @@ namespace wendfyr::infrastructure
             current = &(*current)[segments[i]];
         }
 
-        return &(*current)[segments.back()];
+        return (*current)[segments.back()];
     }
 
 };  // namespace wendfyr::infrastructure

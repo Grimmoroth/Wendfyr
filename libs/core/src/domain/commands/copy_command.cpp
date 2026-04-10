@@ -8,8 +8,8 @@
 namespace wendfyr::domain::commands
 {
     CopyCommand::CopyCommand(std::vector<std::filesystem::path> sources,
-                             std::filesystem::path destination, IFilesystemService& fs,
-                             EventBus& event_bus)
+                             std::filesystem::path destination,
+                             ports::driven::IFilesystemService& fs, services::EventBus& event_bus)
         : _sources{std::move(sources)}
         , _destination{std::move(destination)}
         , _fs{fs}
@@ -19,7 +19,7 @@ namespace wendfyr::domain::commands
 
     void CopyCommand::execute()
     {
-        _created_fieles.clear();
+        _created_files.clear();
 
         for (const auto& source : _sources)
         {
@@ -30,7 +30,7 @@ namespace wendfyr::domain::commands
             _created_files.push_back(target);
         }
 
-        _event_bus.publish(events::FIlesCopiedEvent{_sources, _destination});
+        _event_bus.publish(events::FilesCopiedEvent{_sources, _destination});
 
         spdlog::info("Copying complete {} file(s) to {}", _sources.size(), _destination.string());
     }
@@ -39,26 +39,26 @@ namespace wendfyr::domain::commands
     {
         for (auto it{_created_files.rbegin()}; it != _created_files.rend(); ++it)
         {
-            if (_fs.exists(*it))
+            if (_fs.exist(*it))
             {
                 spdlog::info("Undo copy: deleting {}", it->string());
                 _fs.remove(*it);
             }
             else
             {
-                spdlog::warn("Undo copy: {} already gone, skipping", it->string())
+                spdlog::warn("Undo copy: {} already gone, skipping", it->string());
             }
         }
 
         _event_bus.publish(events::FilesDeletedEvent{_created_files});
-        spdlog::info("Undo copy complete: {} file(s) removed" _created_files.size());
+        spdlog::info("Undo copy complete: {} file(s) removed", _created_files.size());
     }
 
     std::string CopyCommand::description() const
     {
-        if (_soruces.size() == 1)
+        if (_sources.size() == 1)
         {
-            "Copy " + _sources.front().filename().string() + " to " + _destination..string();
+            return "Copy " + _sources.front().filename().string() + " to " + _destination.string();
         }
 
         return "Copy " + std::to_string(_sources.size()) + " files to " + _destination.string();

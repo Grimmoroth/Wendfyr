@@ -16,7 +16,7 @@ namespace wendfyr::domain::events
 
     struct FilesMovedEvent
     {
-        std::vector<std::filesystem::path> source;
+        std::vector<std::filesystem::path> sources;
         std::filesystem::path destination;
     };
 
@@ -27,8 +27,8 @@ namespace wendfyr::domain::events
 
     struct DirectoryChangedEvent
     {
-        std::vector<std::filesystem::path> old_path;
-        std::vector<std::filesystem::path> new_path;
+        std::filesystem::path old_path;
+        std::filesystem::path new_path;
     };
 
     struct SelectionChangedEvent

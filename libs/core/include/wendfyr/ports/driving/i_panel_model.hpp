@@ -6,7 +6,6 @@
 #include <cstddef>
 #include <filesystem>
 #include <span>
-#include <string>
 
 namespace wendfyr::ports::driving
 {
@@ -27,7 +26,8 @@ namespace wendfyr::ports::driving
     class IPanelModel
     {
       public:
-        virtual ~IPanelModel() = default;
+        virtual ~IPanelModel();
+        [[nodiscard]] virtual std::filesystem::path currentDirectory() const = 0;
         [[nodiscard]] virtual std::span<const wendfyr::domain::models::FileEntry> entries()
             const = 0;
         [[nodiscard]] virtual std::size_t entryCount() const noexcept = 0;
@@ -37,9 +37,10 @@ namespace wendfyr::ports::driving
         virtual void refresh() = 0;
 
         virtual void sortBy(SortField field, SortOrder order) = 0;
-        [[nodiscard]] virtual SortField currentSortFiled() const noexcept = 0;
+        [[nodiscard]] virtual SortField currentSortField() const noexcept = 0;
         [[nodiscard]] virtual SortOrder currentSortOrder() const noexcept = 0;
 
+        virtual void toggleSelection(std::size_t index) = 0;
         virtual void selectAll() = 0;
         virtual void deselectAll() = 0;
 

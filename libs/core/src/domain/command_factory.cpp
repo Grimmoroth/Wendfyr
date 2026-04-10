@@ -3,13 +3,13 @@
 #include <utility>
 
 #include "domain/commands/copy_command.hpp"
+#include "domain/commands/delete_command.hpp"
 #include "domain/commands/move_command.hpp"
-#include "domain/delete_command.hpp"
 
 namespace wendfyr::domain
 {
     CommandFactory::CommandFactory(ports::driven::IFilesystemService& fs,
-                                   services::EventBus event_bus)
+                                   services::EventBus& event_bus)
         : _fs{fs}, _event_bus{event_bus}
     {
     }

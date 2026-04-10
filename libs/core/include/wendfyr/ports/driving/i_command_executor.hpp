@@ -6,12 +6,12 @@
 #include <memory>
 #include <string>
 
-namespace wemndfyr::ports::driving
+namespace wendfyr::ports::driving
 {
     class ICommandExecutor
     {
       public:
-        virtual ~ICommandExecutor() = default;
+        virtual ~ICommandExecutor();
         virtual void execute(std::unique_ptr<domain::commands::ICommand> command) = 0;
         virtual void undo() = 0;
         virtual void redo() = 0;
@@ -21,12 +21,12 @@ namespace wemndfyr::ports::driving
         [[nodiscard]] virtual std::string undoDescription() const noexcept = 0;
         [[nodiscard]] virtual std::string redoDescription() const noexcept = 0;
 
-      private:
+      protected:
         ICommandExecutor() = default;
         ICommandExecutor(const ICommandExecutor&) = default;
         ICommandExecutor(ICommandExecutor&&) = default;
         ICommandExecutor& operator=(const ICommandExecutor&) = default;
         ICommandExecutor& operator=(ICommandExecutor&&) = default;
     };
-};  // namespace wemndfyr::ports::driving
+};  // namespace wendfyr::ports::driving
 #endif

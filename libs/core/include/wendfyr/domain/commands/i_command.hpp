@@ -8,7 +8,7 @@ namespace wendfyr::domain::commands
     class ICommand
     {
       public:
-        virtual ~ICommand() = default;
+        virtual ~ICommand();
         virtual void execute() = 0;
         virtual void undo() = 0;
         [[nodiscard]] virtual std::string description() const = 0;

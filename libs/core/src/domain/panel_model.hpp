@@ -7,11 +7,11 @@
 #include "wendfyr/services/event_bus.hpp"
 
 #include <filesystem>
-#include <vecotor>
+#include <vector>
 
 namespace wendfyr::ports::driven
 {
-    class IFileSystemService;
+    class IFilesystemService;
 };
 
 namespace wendfyr::domain
@@ -19,7 +19,7 @@ namespace wendfyr::domain
     class PanelModel final : public ports::driving::IPanelModel
     {
       public:
-        PanelModel(IFileSystemService& fs, services::EventBus event_bus,
+        PanelModel(ports::driven::IFilesystemService& fs, services::EventBus& event_bus,
                    std::filesystem::path initial_directory);
         ~PanelModel() override;
         PanelModel(const PanelModel&) = delete;
@@ -33,15 +33,15 @@ namespace wendfyr::domain
         [[nodiscard]] std::size_t entryCount() const noexcept override;
 
         // Navigation
-        void nagivateTo(const std::filesystem::path& directory) override;
+        void navigateTo(const std::filesystem::path& new_directory) override;
         void navigateUp() override;
         void refresh() override;
 
         // Sorting
 
-        void sortBy(ports::driving::SortFiled field, ports::driving::SortOrder order override;
-        void ports::driving::SortFiled currentSortField() const noexcept override;
-        void ports::driving::SortOrder currentSortOrder() const noexcept override;
+        void sortBy(ports::driving::SortField field, ports::driving::SortOrder order) override;
+        [[nodiscard]] ports::driving::SortField currentSortField() const noexcept override;
+        [[nodiscard]] ports::driving::SortOrder currentSortOrder() const noexcept override;
 
         // Selection
         void toggleSelection(std::size_t index) override;
@@ -50,19 +50,19 @@ namespace wendfyr::domain
         [[nodiscard]] std::vector<domain::models::FileEntry> selectedEntries() const override;
         [[nodiscard]] std::size_t selectedCount() const noexcept override;
 
-        private:
-            void load_entries();
-            void applySorting();
-            void onEvent(const domain::events::Event& event);
+      private:
+        void loadEntries();
+        void applySorting();
+        void onEvent(const domain::events::Event& event);
 
-            ports::driven::IFileSystemService& _fs;
-            services::EventBus& _event_bus;
-            services::SubscriptionId _subscription_id;
-            std::filesystem::path _current_directory;
-            std::vector<domain::models::FileEntry> _enties;
+        ports::driven::IFilesystemService& _fs;
+        services::EventBus& _event_bus;
+        services::SubscriptionId _subscription_id;
+        std::filesystem::path _current_directory;
+        std::vector<domain::models::FileEntry> _entries;
 
-            ports::driving::SortField _sort_field{ ports::driving::SortField::NAME};
-            ports::driving::SortOrder _sort_order{ ports::driving::SortOrder::ASCENDING};
+        ports::driving::SortField _sort_field{ports::driving::SortField::NAME};
+        ports::driving::SortOrder _sort_order{ports::driving::SortOrder::ASCENDING};
     };
 
 };  // namespace wendfyr::domain

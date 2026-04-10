@@ -17,11 +17,11 @@ namespace wendfyr
     class ApplicationContext
     {
         ApplicationContext() = default;
-        std::shared_ptr<std::services::EventBus> _event_bus;
+        std::shared_ptr<services::EventBus> _event_bus;
         std::shared_ptr<ports::driven::IFilesystemService> _fs;
         friend ApplicationContext createApplication(const std::filesystem::path& start_directory);
 
-        ApplicationContext(std::shared_ptr<std::services::EventBus> event_bus,
+        ApplicationContext(std::shared_ptr<services::EventBus> event_bus,
                            std::shared_ptr<ports::driven::IFilesystemService> fs,
                            std::shared_ptr<ports::driven::IConfigService> config,
                            std::unique_ptr<ports::driving::ICommandExecutor> executor,
