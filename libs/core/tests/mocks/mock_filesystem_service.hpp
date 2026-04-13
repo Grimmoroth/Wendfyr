@@ -1,3 +1,6 @@
+#ifndef WENDFYR_TESTS_MOCKS_MOCK_FILESYSTEM_SERVICE_HPP
+#define WENDFYR_TESTS_MOCKS_MOCK_FILESYSTEM_SERVICE_HPP
+
 #include "wendfyr/domain/models/file_entry.hpp"
 #include "wendfyr/ports/driven/i_filesystem_service.hpp"
 
@@ -27,3 +30,5 @@ namespace wendfyr::tests::mock
     };
 
 };  // namespace wendfyr::tests::mock
+
+#endif
