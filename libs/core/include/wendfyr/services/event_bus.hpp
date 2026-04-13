@@ -24,8 +24,8 @@ namespace wendfyr::services
       private:
         struct Subscription
         {
-            SubscriptionId id{};
-            EventCallback callback{};
+            SubscriptionId id;
+            EventCallback callback;
         };
 
         std::vector<Subscription> _subscribers;

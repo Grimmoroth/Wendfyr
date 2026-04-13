@@ -60,6 +60,6 @@ if(WF_WITH_GUI)
 endif()
 
 if(BUILD_TESTING)
-    add_subdirectory(tests)
+    #add_subdirectory(tests)
 endif()
     

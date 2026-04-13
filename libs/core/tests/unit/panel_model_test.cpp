@@ -11,6 +11,8 @@
 #include <filesystem>
 #include <vector>
 
+#include "mocks/mock_filesystem_service.hpp"
+
 namespace wendfyr::tests
 {
     namespace
@@ -26,6 +28,7 @@ namespace wendfyr::tests
             entry.size = size;
             return entry;
         }
+
         std::vector<domain::models::FileEntry> makeSampleEntries()
         {
             return {
@@ -55,7 +58,7 @@ namespace wendfyr::tests
     TEST_F(PanelModelTest, StartsAtInitialDirectory)
     {
         auto panel = makePanel();
-        EXPECTED_EQ(panel->currentDirectory(), start_dir);
+        EXPECT_EQ(panel->currentDirectory(), start_dir);
     }
 
     TEST_F(PanelModelTest, LoadEntriesConstruction)
@@ -71,7 +74,7 @@ namespace wendfyr::tests
         EXPECT_CALL(mock_fs, listDirectory(new_dir))
             .WillOnce(testing::Return(std::vector<domain::models::FileEntry>{}));
 
-        panel.navigateTo(new_dir);
+        panel->navigateTo(new_dir);
         EXPECT_EQ(panel->currentDirectory(), new_dir);
     }
 
@@ -85,7 +88,7 @@ namespace wendfyr::tests
         EXPECT_CALL(mock_fs, listDirectory(std::filesystem::path("test")))
             .WillOnce(testing::Return(makeSampleEntries()));
 
-        panel->nagivateUp();
+        panel->navigateUp();
         EXPECT_EQ(panel->currentDirectory(), "/test");
     }
 
@@ -104,7 +107,7 @@ namespace wendfyr::tests
     {
         auto panel = makePanel();
 
-        panel->sortBy(ports::driving::SortFied::SIZE, ports::driving::SortField::ASCENDING);
+        panel->sortBy(ports::driving::SortField::SIZE, ports::driving::SortOrder::ASCENDING);
         auto entries = makeSampleEntries();
 
         EXPECT_EQ(entries[0].name, "documents");
@@ -188,8 +191,8 @@ namespace wendfyr::tests
                     domain::events::Overloaded{
                         [&](const domain::events::DirectoryChangedEvent& e)
                         {
-                            event_received = true;
-                            received_new_path = e.new_path;
+                            event_recived = true;
+                            recived_new_path = e.new_path;
                         },
                         [](const auto&) {},
                     },
@@ -219,7 +222,7 @@ namespace wendfyr::tests
     {
         auto panel = makePanel();
 
-        event_bus.publish(domain::events::FilesCopiedEvent{"/somewhere/file.txt"},
-                          "/other/directory");
+        event_bus.publish(
+            domain::events::FilesCopiedEvent{{"/somewhere/file.txt"}, "/other/directory"});
     }
 };  // namespace wendfyr::tests

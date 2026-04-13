@@ -6,7 +6,7 @@
 
 #include <gmock/gmock.h>
 
-namespace wendfyr::tests::mock
+namespace wendfyr::tests::mocks
 {
 
     class MockFilesystemService : public ports::driven::IFilesystemService
@@ -19,16 +19,19 @@ namespace wendfyr::tests::mock
                     (const std::filesystem::path& source, const std::filesystem::path& destination),
                     (const, override));
 
-        MOCK_METHOD(void, move, (const std::filesystem::path& source, std::filesystem::path& dest),
+        MOCK_METHOD(void, move,
+                    (const std::filesystem::path& source, const std::filesystem::path& dest),
                     (const, override));
 
         MOCK_METHOD(void, remove, (const std::filesystem::path& target), (const, override));
-        MOCK_METHOD(void, createDirectory, (const std::filesystem::path target), (const, override));
+        MOCK_METHOD(void, createDirectory, (const std::filesystem::path& target),
+                    (const, override));
         MOCK_METHOD(bool, exist, (const std::filesystem::path& target), (const, override));
         MOCK_METHOD(bool, isDirectory, (const std::filesystem::path& target), (const, override));
-        MOCK_METHOD(std::uintmax_t, fileSize, (std::filesystem::path & target), (const, override));
+        MOCK_METHOD(std::uintmax_t, fileSize, (const std::filesystem::path& target),
+                    (const, override));
     };
 
-};  // namespace wendfyr::tests::mock
+};  // namespace wendfyr::tests::mocks
 
 #endif
