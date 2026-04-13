@@ -60,11 +60,13 @@ if(BUILD_TESTING)
     add_executable(wf_core_test
         test/unit/command_executor_test.cpp
         tests/unit/panel_model_test.cpp
+        tests/copy_command_test.cpp
     )
 
     target_include_directories(wf_core_test
         PRIVATE
         ${CMAKE_CURRENT_SOURCE_DIR}/tests
+        ${CMAKE_CURRENT_SOURCE_DIR}/src
     )
 
     target_link_libraries(wf_core_test
