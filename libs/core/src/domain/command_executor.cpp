@@ -26,7 +26,7 @@ namespace wendfyr::domain
     {
         if (!canUndo())
         {
-            std::runtime_error("Nothing to undo!");
+            throw std::runtime_error("Nothing to undo!");
         }
 
         auto command = std::move(_undo_stack.back());
