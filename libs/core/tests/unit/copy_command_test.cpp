@@ -19,8 +19,8 @@ namespace wendfyr::tests
       protected:
         mocks::MockFilesystemService mock_fs;
         services::EventBus event_bus;
-        std::filesystem::path source_file = "home/user/file.txt";
-        std::filesystem::path destination_dir = "home/user/projects";
+        std::filesystem::path source_file = "/home/user/file.txt";
+        std::filesystem::path destination_dir = "/home/user/projects";
 
         std::unique_ptr<domain::commands::CopyCommand> makeSingleCopyCommand()
         {
@@ -32,9 +32,9 @@ namespace wendfyr::tests
         std::unique_ptr<domain::commands::CopyCommand> makeMultiCopyCommand()
         {
             std::vector<std::filesystem::path> sources = {
-                "home/user/a.text",
-                "home/user/b.text",
-                "home/user/c.text",
+                "/home/user/a.text",
+                "/home/user/b.text",
+                "/home/user/c.text",
             };
             return std::make_unique<domain::commands::CopyCommand>(sources, destination_dir,
                                                                    mock_fs, event_bus);
@@ -50,16 +50,16 @@ namespace wendfyr::tests
         cmd->execute();
     }
 
-    TEST_F(CopyCommandTest, ExecuteMultipleFiles)
+    TEST_F(CopyCommandTest, ExecuteCopiesMultipleFiles)
     {
         EXPECT_CALL(mock_fs,
-                    copy(std::filesystem::path("home/user/a.text"), destination_dir / "a.text"))
+                    copy(std::filesystem::path("/home/user/a.text"), destination_dir / "a.text"))
             .Times(1);
         EXPECT_CALL(mock_fs,
-                    copy(std::filesystem::path("home/user/b.text"), destination_dir / "b.text"))
+                    copy(std::filesystem::path("/home/user/b.text"), destination_dir / "b.text"))
             .Times(1);
         EXPECT_CALL(mock_fs,
-                    copy(std::filesystem::path("home/user/a.text"), destination_dir / "c.text"))
+                    copy(std::filesystem::path("/home/user/c.text"), destination_dir / "c.text"))
             .Times(1);
 
         auto cmd = makeMultiCopyCommand();
@@ -126,7 +126,7 @@ namespace wendfyr::tests
         auto cmd = makeSingleCopyCommand();
         auto desc = cmd->description();
 
-        EXPECT_THAT(desc, testing::HasSubstr("file.text"));
+        EXPECT_THAT(desc, testing::HasSubstr("file.txt"));
         EXPECT_THAT(desc, testing::HasSubstr(destination_dir.string()));
     }
 

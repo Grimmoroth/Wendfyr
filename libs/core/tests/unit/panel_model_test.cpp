@@ -32,10 +32,10 @@ namespace wendfyr::tests
         std::vector<domain::models::FileEntry> makeSampleEntries()
         {
             return {
-                makeEntry("domuments", domain::models::EntryType::DIRECTORY, 0),
-                makeEntry("before.txt", domain::models::EntryType::FILE, 300),
-                makeEntry("about.txt", domain::models::EntryType::FILE, 100),
-                makeEntry("creed.txt", domain::models::EntryType::FILE, 500),
+                makeEntry("documents", domain::models::EntryType::DIRECTORY, 0),
+                makeEntry("zebra.txt", domain::models::EntryType::FILE, 500),
+                makeEntry("apple.txt", domain::models::EntryType::FILE, 100),
+                makeEntry("banana.txt", domain::models::EntryType::FILE, 300),
             };
         }
     }  // namespace
@@ -80,12 +80,12 @@ namespace wendfyr::tests
 
     TEST_F(PanelModelTest, NavigateUpGoesToParent)
     {
-        auto sub_dir = std::filesystem::path("test/subdir");
+        auto sub_dir = std::filesystem::path("/test/subdir");
         EXPECT_CALL(mock_fs, listDirectory(sub_dir))
             .WillOnce(testing::Return(std::vector<domain::models::FileEntry>{}));
 
         auto panel = std::make_unique<domain::PanelModel>(mock_fs, event_bus, sub_dir);
-        EXPECT_CALL(mock_fs, listDirectory(std::filesystem::path("test")))
+        EXPECT_CALL(mock_fs, listDirectory(std::filesystem::path("/test")))
             .WillOnce(testing::Return(makeSampleEntries()));
 
         panel->navigateUp();
@@ -95,12 +95,12 @@ namespace wendfyr::tests
     TEST_F(PanelModelTest, DefaultSortByName)
     {
         auto panel = makePanel();
-        auto entries = makeSampleEntries();
+        auto entries = panel->entries();
 
         EXPECT_EQ(entries[0].name, "documents");
-        EXPECT_EQ(entries[1].name, "about.txt");
-        EXPECT_EQ(entries[2].name, "before.txt");
-        EXPECT_EQ(entries[3].name, "creed.txt");
+        EXPECT_EQ(entries[1].name, "apple.txt");
+        EXPECT_EQ(entries[2].name, "banana.txt");
+        EXPECT_EQ(entries[3].name, "zebra.txt");
     }
 
     TEST_F(PanelModelTest, SortBySize)
@@ -108,12 +108,12 @@ namespace wendfyr::tests
         auto panel = makePanel();
 
         panel->sortBy(ports::driving::SortField::SIZE, ports::driving::SortOrder::ASCENDING);
-        auto entries = makeSampleEntries();
+        auto entries = panel->entries();
 
         EXPECT_EQ(entries[0].name, "documents");
-        EXPECT_EQ(entries[1].name, "after.txt");
-        EXPECT_EQ(entries[2].name, "before.txt");
-        EXPECT_EQ(entries[3].name, "creed.txt");
+        EXPECT_EQ(entries[1].name, "apple.txt");
+        EXPECT_EQ(entries[2].name, "banana.txt");
+        EXPECT_EQ(entries[3].name, "zebra.txt");
     }
 
     TEST_F(PanelModelTest, SortDescending)
@@ -121,10 +121,10 @@ namespace wendfyr::tests
         auto panel = makePanel();
         panel->sortBy(ports::driving::SortField::SIZE, ports::driving::SortOrder::DESCENDING);
 
-        auto entries = makeSampleEntries();
-        EXPECT_EQ(entries[0].name, "creed.txt");
-        EXPECT_EQ(entries[1].name, "before.txt");
-        EXPECT_EQ(entries[2].name, "after.txt");
+        auto entries = panel->entries();
+        EXPECT_EQ(entries[0].name, "zebra.txt");
+        EXPECT_EQ(entries[1].name, "banana.txt");
+        EXPECT_EQ(entries[2].name, "apple.txt");
         EXPECT_EQ(entries[3].name, "documents");
     }
 
