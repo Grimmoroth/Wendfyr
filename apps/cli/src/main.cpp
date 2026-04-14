@@ -1,56 +1,235 @@
 #include "wendfyr/bootstrap.hpp"
+#include "wendfyr/domain/events/event.hpp"
 #include "wendfyr/domain/models/file_entry.hpp"
+#include "wendfyr/ports/driving/i_panel_model.hpp"
 
+#include <CLI/CLI.hpp>
+#include <spdlog/common.h>
 #include <spdlog/spdlog.h>
 
 #include <cstdlib>
 #include <filesystem>
+#include <iomanip>
 #include <iostream>
+#include <sstream>
 #include <string>
+#include <vector>
 
-int main()
+#include "CLI/CLI.hpp"
+
+namespace
 {
-    try
+    std::string formatSize(std::uintmax_t bytes)
     {
-        spdlog::set_level(spdlog::level::info);
-        auto home = std::filesystem::current_path();
-        auto app = wendfyr::createApplication(home);
-        auto entries = app.left_panel->entries();
-        std::cout << "Wendfyr - " << home.string() << '\n';
-        std::cout << std::string(60, '-') << '\n';
+        constexpr std::uintmax_t KB{1024};
+        constexpr std::uintmax_t MB{KB * 1024};
+        constexpr std::uintmax_t GB{MB * 1024};
+        constexpr std::uintmax_t TB{GB * 1024};
 
-        for (const auto& entry : entries)
+        std::ostringstream out;
+        out << std::fixed << std::setprecision(1);
+
+        if (bytes >= TB)
         {
-            std::string type_marker;
-            if (entry.type == wendfyr::domain::models::EntryType::DIRECTORY)
+            out << static_cast<double>(bytes) / static_cast<double>(TB) << " TB";
+        }
+        else if (bytes >= GB)
+        {
+            out << static_cast<double>(bytes) / static_cast<double>(GB) << " GB";
+        }
+        else if (bytes >= MB)
+        {
+            out << static_cast<double>(bytes) / static_cast<double>(MB) << " MB";
+        }
+        else if (bytes >= KB)
+        {
+            out << static_cast<double>(bytes) / static_cast<double>(KB) << " KB";
+        }
+        else
+        {
+            out << bytes << " B";
+        }
+
+        return out.str();
+    }
+
+    void printListing(const wendfyr::ports::driving::IPanelModel& panel)
+    {
+        std::cout << "\n " << panel.currentDirectory().string() << "\n ";
+        std::cout << "  " << std ::string(58, '-') << "\n";
+
+        for (const auto& entry : panel.entries())
+        {
+            std::string type_marker{};
+            switch (entry.type)
             {
-                type_marker = "[DIR]";
+                case wendfyr::domain::models::EntryType::DIRECTORY:
+                    type_marker = "[DIR ]";
+                    break;
+                case wendfyr::domain::models::EntryType::SYMLINK:
+                    type_marker = "[LNK ]";
+                    break;
+                case wendfyr::domain::models::EntryType::FILE:
+                    type_marker = "       ";
+                    break;
+                case wendfyr::domain::models::EntryType::UNKNOWN:
+                    type_marker = "  [?]  ";
+                    break;
             }
-            else if (entry.type == wendfyr::domain::models::EntryType::SYMLINK)
-            {
-                type_marker = "[LNK]";
-            }
-            else
-            {
-                type_marker = "       ";
-            }
-            std::cout << type_marker << entry.name;
+
+            std::cout << "  " << type_marker << std::left << std::setw(35) << entry.name;
+
             if (entry.type == wendfyr::domain::models::EntryType::FILE)
             {
-                std::cout << " (" << entry.size << " bytes)";
+                std::cout << std::right << std::setw(10) << formatSize(entry.size);
             }
 
             std::cout << '\n';
         }
 
-        std::cout << std::string(60, '-') << '\n';
-        std::cout << entries.size() << " entries\n";
+        std::cout << "  " << std::string(58, '-') << '\n';
+        std::cout << "  " << panel.entryCount() << " entries.\n\n";
+    }
+}  // namespace
 
+int main(int argc, char** argv)
+{
+    try
+    {
+        CLI::App app{"Wendfyr - command-line file manager"};
+        app.require_subcommand(1);
+        bool verbose{false};
+
+        app.add_flag("-v,--verbose", verbose, "Enable verbose logging");
+
+        std::string list_dir{};
+        std::string sort_field{"name"};
+        bool sort_descending{false};
+
+        // LIST
+        auto* list_cmd{app.add_subcommand("list", "List directory contents")};
+        list_cmd->add_option("directory", list_dir, "Directory to list")->default_val(".");
+        list_cmd->add_option("--sort,-s", sort_field, "Sort by: name, size, date")
+            ->default_val("name");
+        list_cmd->add_flag("--desc,-d", sort_descending, "Sort descending");
+
+        // COPY
+        std::vector<std::string> copy_args;
+        auto* copy_cmd{app.add_subcommand("copy", "Copy files to destination")};
+        copy_cmd->add_option("paths", copy_args, "Source files and destination")
+            ->required()
+            ->expected(-2);
+
+        // MOVE
+        std::vector<std::string> move_args;
+        auto* move_cmd{app.add_subcommand("move", "Move files to destination")};
+        move_cmd->add_option("paths", move_args, "Source files and destination")
+            ->required()
+            ->expected(-2);
+
+        // Delete
+        std::vector<std::string> delete_targets;
+        auto* delete_cmd{app.add_subcommand("delete", "Delete files")};
+        delete_cmd->add_option("targets", delete_targets, "Files to delete")
+            ->required()
+            ->expected(-1);
+
+        CLI11_PARSE(app, argc, argv);
+
+        if (verbose)
+        {
+            spdlog::set_level(spdlog::level::debug);
+        }
+        else
+        {
+            spdlog::set_level(spdlog::level::warn);
+        }
+
+        auto home{std::filesystem::current_path()};
+        auto ctx{wendfyr::createApplication(home)};
+
+        if (list_cmd->parsed())
+        {
+            auto dir{std::filesystem::absolute(list_dir)};
+            if (dir != ctx.left_panel->currentDirectory())
+            {
+                // todo: First set orderering then navigate?
+                ctx.left_panel->navigateTo(dir);
+
+                auto field{wendfyr::ports::driving::SortField::NAME};
+                if (sort_field == "size")
+                {
+                    field = wendfyr::ports::driving::SortField::SIZE;
+                }
+                if (sort_field == "date")
+                {
+                    field = wendfyr::ports::driving::SortField::LAST_MODIFIED;
+                }
+
+                auto order{sort_descending ? wendfyr::ports::driving::SortOrder::DESCENDING
+                                           : wendfyr::ports::driving::SortOrder::ASCENDING};
+
+                ctx.left_panel->sortBy(field, order);
+                printListing(*ctx.left_panel);
+            }
+            else if (copy_cmd->parsed())
+            {
+                std::cout << "Here!\n";
+                auto dest{std::filesystem::absolute(copy_args.back())};
+                std::vector<std::filesystem::path> sources{copy_args.size() - 1};
+                for (std::size_t i{0}; i + 1 < copy_args.size(); ++i)
+                {
+                    sources.push_back(std::filesystem::absolute(copy_args[i]));
+                }
+
+                std::cout << " Copying " << sources.size() << " file(s) to" << dest.string()
+                          << "...\n";
+
+                auto cmd{ctx.command_factory->createCopyCommand(std::move(sources), dest)};
+                ctx.command_executor->execute(std::move(cmd));
+
+                std::cout << "Done.\n";
+            }
+            else if (move_cmd->parsed())
+            {
+                auto dest{std::filesystem::absolute(move_args.back())};
+                std::vector<std::filesystem::path> sources{move_args.size() - 1};
+                for (std::size_t i{0}; i + 1 < move_args.size(); ++i)
+                {
+                    sources.push_back(std::filesystem::absolute(move_args[i]));
+                }
+                std::cout << " Moving " << sources.size() << " file(s) to" << dest.string()
+                          << "...\n";
+                auto cmd{ctx.command_factory->createMoveCommand(std::move(sources), dest)};
+                ctx.command_executor->execute(std::move(cmd));
+
+                std::cout << "Done.\n";
+            }
+            else if (delete_cmd->parsed())
+            {
+                std::vector<std::filesystem::path> targets{delete_targets.size()};
+                for (const auto& target : delete_targets)
+                {
+                    targets.push_back(std::filesystem::absolute(target));
+                }
+
+                std::cout << " Deleting " << targets.size() << " file(s)...\n";
+                auto cmd{ctx.command_factory->createDeleteCommand(std::move(targets))};
+                ctx.command_executor->execute(std::move(cmd));
+
+                std::cout << " Done.\n";
+            }
+        }
         return EXIT_SUCCESS;
+    }
+    catch (const std::filesystem::filesystem_error& e)
+    {
+        std::cerr << " Filesystem error: " << e.what() << '\n';
+        return EXIT_FAILURE;
     }
     catch (const std::exception& e)
     {
-        spdlog::error("Fatal error: {}", e.what());
+        std::cerr << " Error: " << e.what() << '\n';
         return EXIT_FAILURE;
     }
 }
