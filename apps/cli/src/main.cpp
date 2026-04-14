@@ -1,5 +1,4 @@
 #include "wendfyr/bootstrap.hpp"
-#include "wendfyr/domain/events/event.hpp"
 #include "wendfyr/domain/models/file_entry.hpp"
 #include "wendfyr/ports/driving/i_panel_model.hpp"
 
@@ -14,8 +13,6 @@
 #include <sstream>
 #include <string>
 #include <vector>
-
-#include "CLI/CLI.hpp"
 
 namespace
 {
@@ -112,6 +109,7 @@ int main(int argc, char** argv)
         list_cmd->add_option("--sort,-s", sort_field, "Sort by: name, size, date")
             ->default_val("name");
         list_cmd->add_flag("--desc,-d", sort_descending, "Sort descending");
+        list_cmd->alias("ls");
 
         // COPY
         std::vector<std::string> copy_args;
@@ -119,6 +117,7 @@ int main(int argc, char** argv)
         copy_cmd->add_option("paths", copy_args, "Source files and destination")
             ->required()
             ->expected(-2);
+        copy_cmd->alias("cp");
 
         // MOVE
         std::vector<std::string> move_args;
@@ -126,6 +125,7 @@ int main(int argc, char** argv)
         move_cmd->add_option("paths", move_args, "Source files and destination")
             ->required()
             ->expected(-2);
+        move_cmd->alias("mv");
 
         // Delete
         std::vector<std::string> delete_targets;
@@ -133,6 +133,8 @@ int main(int argc, char** argv)
         delete_cmd->add_option("targets", delete_targets, "Files to delete")
             ->required()
             ->expected(-1);
+        delete_cmd->alias("rm");
+        delete_cmd->alias("del");
 
         CLI11_PARSE(app, argc, argv);
 
@@ -172,53 +174,55 @@ int main(int argc, char** argv)
                 ctx.left_panel->sortBy(field, order);
                 printListing(*ctx.left_panel);
             }
-            else if (copy_cmd->parsed())
+        }
+        else if (copy_cmd->parsed())
+        {
+            auto dest{std::filesystem::absolute(copy_args.back())};
+            std::vector<std::filesystem::path> sources{};
+            sources.reserve(copy_args.size() - 1);
+
+            for (std::size_t i{0}; i + 1 < copy_args.size(); ++i)
             {
-                std::cout << "Here!\n";
-                auto dest{std::filesystem::absolute(copy_args.back())};
-                std::vector<std::filesystem::path> sources{copy_args.size() - 1};
-                for (std::size_t i{0}; i + 1 < copy_args.size(); ++i)
-                {
-                    sources.push_back(std::filesystem::absolute(copy_args[i]));
-                }
-
-                std::cout << " Copying " << sources.size() << " file(s) to" << dest.string()
-                          << "...\n";
-
-                auto cmd{ctx.command_factory->createCopyCommand(std::move(sources), dest)};
-                ctx.command_executor->execute(std::move(cmd));
-
-                std::cout << "Done.\n";
+                sources.push_back(std::filesystem::absolute(copy_args[i]));
             }
-            else if (move_cmd->parsed())
+
+            std::cout << " Copying " << sources.size() << " file(s) to" << dest.string() << "...\n";
+
+            auto cmd{ctx.command_factory->createCopyCommand(std::move(sources), dest)};
+            ctx.command_executor->execute(std::move(cmd));
+
+            std::cout << "Done.\n";
+        }
+        else if (move_cmd->parsed())
+        {
+            auto dest{std::filesystem::absolute(move_args.back())};
+            std::vector<std::filesystem::path> sources{};
+            sources.reserve(move_args.size() - 1);
+
+            for (std::size_t i{0}; i + 1 < move_args.size(); ++i)
             {
-                auto dest{std::filesystem::absolute(move_args.back())};
-                std::vector<std::filesystem::path> sources{move_args.size() - 1};
-                for (std::size_t i{0}; i + 1 < move_args.size(); ++i)
-                {
-                    sources.push_back(std::filesystem::absolute(move_args[i]));
-                }
-                std::cout << " Moving " << sources.size() << " file(s) to" << dest.string()
-                          << "...\n";
-                auto cmd{ctx.command_factory->createMoveCommand(std::move(sources), dest)};
-                ctx.command_executor->execute(std::move(cmd));
-
-                std::cout << "Done.\n";
+                sources.push_back(std::filesystem::absolute(move_args[i]));
             }
-            else if (delete_cmd->parsed())
+            std::cout << " Moving " << sources.size() << " file(s) to" << dest.string() << "...\n";
+            auto cmd{ctx.command_factory->createMoveCommand(std::move(sources), dest)};
+            ctx.command_executor->execute(std::move(cmd));
+
+            std::cout << "Done.\n";
+        }
+        else if (delete_cmd->parsed())
+        {
+            std::vector<std::filesystem::path> targets{};
+            targets.reserve(delete_targets.size());
+            for (const auto& target : delete_targets)
             {
-                std::vector<std::filesystem::path> targets{delete_targets.size()};
-                for (const auto& target : delete_targets)
-                {
-                    targets.push_back(std::filesystem::absolute(target));
-                }
-
-                std::cout << " Deleting " << targets.size() << " file(s)...\n";
-                auto cmd{ctx.command_factory->createDeleteCommand(std::move(targets))};
-                ctx.command_executor->execute(std::move(cmd));
-
-                std::cout << " Done.\n";
+                targets.push_back(std::filesystem::absolute(target));
             }
+
+            std::cout << " Deleting " << targets.size() << " file(s)...\n";
+            auto cmd{ctx.command_factory->createDeleteCommand(std::move(targets))};
+            ctx.command_executor->execute(std::move(cmd));
+
+            std::cout << " Done.\n";
         }
         return EXIT_SUCCESS;
     }

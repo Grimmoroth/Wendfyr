@@ -1,99 +1,113 @@
-Checks: >
-  -*,
-  bugprone-*,
-  cppcoreguidelines-*,
-  modernize-*,
-  readability-*,
-  performance-*,
-  misc-*,
-  concurrency-*,
-  -modernize-use-trailing-return-type,
-  -readability-identifier-length,
-  -cppcoreguidelines-avoid-magic-numbers,
-  -readability-magic-numbers,
-  -readability-braces-around-statements,
-  -cppcoreguidelines-owning-memory,
-  -misc-non-private-member-variables-in-classes,
-  -modernize-use-nodiscard,
-  -cppcoreguidelines-pro-bounds-array-to-pointer-decay,
-  -bugprone-easily-swappable-parameters,
-  -readability-else-after-return,
-  -cppcoreguidelines-avoid-do-while
+BasedOnStyle: Google
+Language: Cpp
+Standard: Latest
 
-WarningsAsErrors: "*"
+# Indentation
+IndentWidth: 4
+TabWidth: 4
+UseTab: Never
+ContinuationIndentWidth: 4
+NamespaceIndentation: All
+IndentCaseLabels: true
+AccessModifierOffset: -2
+LambdaBodyIndentation: Signature
 
-HeaderFilterRegex: "(include/wendfyr|src)/.*"
+# Column limit — 80 keeps things tight and readable
+ColumnLimit: 80
 
-CheckOptions:
-  ## Types: PascalCase
-  - key: readability-identifier-naming.ClassCase
-    value: CamelCase
-  - key: readability-identifier-naming.StructCase
-    value: CamelCase
-  - key: readability-identifier-naming.EnumCase
-    value: CamelCase
+# Braces on new line (Allman style)
+BreakBeforeBraces: Allman
 
-  ## Abstract classes must start with I (ICommand, IFilesystemService)
-  - key: readability-identifier-naming.AbstractClassPrefix
-    value: "I"
+# Short forms
+AllowShortFunctionsOnASingleLine: Inline
+AllowShortIfStatementsOnASingleLine: Never
+AllowShortLoopsOnASingleLine: false
+AllowShortBlocksOnASingleLine: Empty
+AllowShortLambdasOnASingleLine: Inline
 
-  ## Functions and methods: camelCase
-  - key: readability-identifier-naming.FunctionCase
-    value: camelBack
-  - key: readability-identifier-naming.MethodCase
-    value: camelBack
+# Function arguments — align wrapped arguments to the opening paren:
+#   function(argument1,
+#            argument2,
+#            argument3);
+AlignAfterOpenBracket: Align
 
-  ## Variables and parameters: lower_case
-  - key: readability-identifier-naming.VariableCase
-    value: lower_case
-  - key: readability-identifier-naming.ParameterCase
-    value: lower_case
+# When ALL arguments don't fit, put each on its own line:
+#   function(argument1,
+#            argument2,
+#            argument3,
+#            argument4);
+# Not:
+#   function(argument1, argument2,
+#            argument3, argument4);
+BinPackArguments: false
+BinPackParameters: false
 
-  ## Member variables: _leading_underscore
-  - key: readability-identifier-naming.MemberCase
-    value: lower_case
-  - key: readability-identifier-naming.MemberPrefix
-    value: "_"
+# If the function name + first argument is too long, put first arg on next line:
+#   veryLongFunctionName(
+#       argument1,
+#       argument2);
+AllowAllArgumentsOnNextLine: true
+AllowAllParametersOfDeclarationOnNextLine: true
 
-  - key: readability-identifier-naming.PublicMemberCase
-    value: lower_case
-  - key: readability-identifier-naming.PublicMemberPrefix
-    value: ""
+# Brace initialization on one line when short:
+#   int i{3};           ← fits, one line
+#   std::vector v{1, 2, 3};  ← fits, one line
+#   std::vector v{
+#       1, 2, 3, 4, 5, 6, 7, 8, 9, 10
+#   };                  ← too long, wraps
+Cpp11BracedListStyle: true
+AllowShortBlocksOnASingleLine: Empty
 
-  ## Constants and constexpr: UPPER_CASE
-  - key: readability-identifier-naming.ConstantCase
-    value: UPPER_CASE
-  - key: readability-identifier-naming.ConstexprVariableCase
-    value: UPPER_CASE
-  - key: readability-identifier-naming.StaticConstantCase
-    value: UPPER_CASE
-  - key: readability-identifier-naming.GlobalConstantCase
-    value: UPPER_CASE
+# If conditions — break BEFORE operators so they line up:
+#   if (longConditionHere
+#       || anotherLongCondition
+#       || thirdCondition)
+#   Not:
+#   if (longConditionHere ||
+#       anotherLongCondition ||
+#       thirdCondition)
+BreakBeforeBinaryOperators: NonAssignment
 
-  ## Enum values: UPPER_CASE
-  - key: readability-identifier-naming.EnumConstantCase
-    value: UPPER_CASE
+# Pointers and references align with type
+PointerAlignment: Left
+ReferenceAlignment: Left
 
-  ## Namespaces: lower_case
-  - key: readability-identifier-naming.NamespaceCase
-    value: lower_case
+# Include ordering
+SortIncludes: CaseSensitive
+IncludeBlocks: Regroup
+IncludeCategories:
+  - Regex:    '^"wendfyr/'
+    Priority: 1
+  - Regex:    '^<(gtest|gmock|spdlog|nlohmann|CLI|ftxui|fmt)/'
+    Priority: 2
+  - Regex:    '^<'
+    Priority: 3
+  - Regex:    '.*'
+    Priority: 4
 
-  ## Template parameters: PascalCase
-  - key: readability-identifier-naming.TemplateParameterCase
-    value: CamelCase
+# Spaces
+SpaceAfterCStyleCast: false
+SpaceBeforeParens: ControlStatements
+AlignConsecutiveAssignments: false
+AlignConsecutiveDeclarations: false
+AlignTrailingComments: true
 
-  ## Macros: UPPER_CASE
-  - key: readability-identifier-naming.MacroDefinitionCase
-    value: UPPER_CASE
+# Penalties
+PenaltyBreakComment: 300
+PenaltyBreakFirstLessLess: 120
+PenaltyBreakString: 1000
+PenaltyExcessCharacter: 1000000
+PenaltyReturnTypeOnItsOwnLine: 200
 
-  ## Prefer using over typedef
-  - key: modernize-use-using.IgnoreMacros
-    value: true
+# Constructor initializers
+PackConstructorInitializers: NextLine
+BreakConstructorInitializers: BeforeComma
 
-  ## Require override on virtual functions (Liskov enforcement)
-  - key: modernize-use-override.IgnoreDestructors
-    value: false
+# C++20/23 requires clauses
+RequiresClausePosition: OwnLine
+IndentRequiresClause: true
 
-  ## Flag move constructors missing noexcept
-  - key: performance-noexcept-move-constructor.IgnoreDestructors
-    value: false
+# Misc
+MaxEmptyLinesToKeep: 1
+RemoveParentheses: Leave
+InsertBraces: true
