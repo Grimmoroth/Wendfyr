@@ -79,6 +79,25 @@ namespace wendfyr::domain::errors
       private:
         std::filesystem::path _path;
     };
+
+    class CrossDeviceMoveException : public WendfyrError
+    {
+      public:
+        CrossDeviceMoveException(const std::filesystem::path& source,
+                                 const std::filesystem::path& dest)
+            : WendfyrError("Cannot move across devices: " + source.string() + "->" + dest.string())
+            , _source{source}
+            , _dest{dest}
+        {
+        }
+
+        [[nodiscard]] const std::filesystem::path source() const noexcept { return _source; }
+        [[nodiscard]] const std::filesystem::path dest() const noexcept { return _dest; }
+
+      private:
+        std::filesystem::path _source;
+        std::filesystem::path _dest;
+    };
 };  // namespace wendfyr::domain::errors
 
 #endif
