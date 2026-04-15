@@ -64,6 +64,21 @@ namespace wendfyr::domain::errors
         std::uintmax_t _available;
     };
 
+    class InvalidPathException : public WendfyrError
+    {
+      public:
+        InvalidPathException(const std::filesystem::path& file_path, const std::string& reason = "")
+            : WendfyrError("Invalid path: " + file_path.string() +
+                           (reason.empty() ? "" : " (" + reason + ")"))
+            , _path{file_path}
+        {
+        }
+
+        [[nodiscard]] const std::filesystem::path path() const noexcept { return _path; }
+
+      private:
+        std::filesystem::path _path;
+    };
 };  // namespace wendfyr::domain::errors
 
 #endif
