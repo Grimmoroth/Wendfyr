@@ -40,6 +40,30 @@ namespace wendfyr::domain::errors
       private:
         std::filesystem::path _path;
     };
+
+    class DiskFullException : public WendfyrError
+    {
+      public:
+        DiskFullException(const std::filesystem::path file_path, std::uintmax_t required_bytes,
+                          std::uintmax_t available_bytes)
+            : WendfyrError("Disk full: need" + std::to_string(required_bytes) + " bytes, " +
+                           std::to_string(available_bytes) + " available at " + file_path.string())
+            , _path{file_path}
+            , _required{required_bytes}
+            , _available{available_bytes}
+        {
+        }
+
+        [[nodiscard]] const std::filesystem::path path() const noexcept { return _path; }
+        [[nodiscard]] std::uintmax_t requiredBytes() const noexcept { return _required; }
+        [[nodiscard]] std::uintmax_t availableBytes() const noexcept { return _available; }
+
+      private:
+        std::filesystem::path _path;
+        std::uintmax_t _required;
+        std::uintmax_t _available;
+    };
+
 };  // namespace wendfyr::domain::errors
 
 #endif
