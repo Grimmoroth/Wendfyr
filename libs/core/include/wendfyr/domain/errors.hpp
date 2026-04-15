@@ -98,6 +98,12 @@ namespace wendfyr::domain::errors
         std::filesystem::path _source;
         std::filesystem::path _dest;
     };
+
+    class OperationCancelledException : public WendfyrError
+    {
+      public:
+        OperationCancelledException() : WendfyrError("Operation cancelled by user.") {}
+    };
 };  // namespace wendfyr::domain::errors
 
 #endif
