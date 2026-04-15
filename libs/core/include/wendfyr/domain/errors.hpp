@@ -17,11 +17,25 @@ namespace wendfyr::domain::errors
     {
       public:
         explicit FileNotFoundException(const std::filesystem::path& file_path)
-            : WendfyrError("File not found" + file_path.string()), _path{file_path}
+            : WendfyrError("File not found: " + file_path.string()), _path{file_path}
         {
         }
 
         [[nodiscard]] const std::filesystem::path& path() const noexcept { return _path; }
+
+      private:
+        std::filesystem::path _path;
+    };
+
+    class PermissionDeniedException : public WendfyrError
+    {
+      public:
+        explicit PermissionDeniedException(const std::filesystem::path& file_path)
+            : WendfyrError("Permision Denied: " + file_path.string()), _path{file_path}
+        {
+        }
+
+        const std::filesystem::path path() const noexcept { return _path; }
 
       private:
         std::filesystem::path _path;
