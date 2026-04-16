@@ -242,6 +242,11 @@ int main(int argc, char** argv)
         std::cerr << "  Disk full at:  " << e.path().string() << '\n';
         return EXIT_FAILURE;
     }
+    catch (const wendfyr::domain::errors::FileAlreadyExcistsException& e)
+    {
+        std::cerr << "  File already exists: " << e.path().string() << '\n';
+        return EXIT_FAILURE;
+    }
     catch (const wendfyr::domain::errors::OperationCancelledException& e)
     {
         return EXIT_FAILURE;

@@ -99,6 +99,20 @@ namespace wendfyr::domain::errors
         std::filesystem::path _dest;
     };
 
+    class FileAlreadyExcistsException : public WendfyrError
+    {
+      public:
+        FileAlreadyExcistsException(const std::filesystem::path& file_path)
+            : WendfyrError("File already exists: " + file_path.string()), _path{file_path}
+        {
+        }
+
+        [[nodiscard]] std::filesystem::path path() const noexcept { return _path; }
+
+      private:
+        std::filesystem::path _path;
+    };
+
     class OperationCancelledException : public WendfyrError
     {
       public:

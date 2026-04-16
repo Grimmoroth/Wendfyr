@@ -27,6 +27,10 @@ namespace wendfyr::infrastructure
             {
                 throw domain::errors::DiskFullException(ctx_path, 0, 0);
             }
+            if (code == std::errc::file_exists)
+            {
+                throw domain::errors::FileAlreadyExcistsException(ctx_path);
+            }
 
             throw domain::errors::WendfyrError("Filesystem error at: " + ctx_path.string() + ": " +
                                                code.message());
