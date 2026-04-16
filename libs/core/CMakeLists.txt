@@ -61,6 +61,7 @@ if(BUILD_TESTING)
         tests/unit/command_executor_test.cpp
         tests/unit/panel_model_test.cpp
         tests/unit/copy_command_test.cpp
+        tests/unit/move_command_test.cpp
     )
 
     target_include_directories(wf_core_test
