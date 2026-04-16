@@ -1,4 +1,5 @@
 #include "wendfyr/bootstrap.hpp"
+#include "wendfyr/domain/errors.hpp"
 #include "wendfyr/domain/models/file_entry.hpp"
 #include "wendfyr/ports/driving/i_panel_model.hpp"
 
@@ -226,14 +227,32 @@ int main(int argc, char** argv)
         }
         return EXIT_SUCCESS;
     }
-    catch (const std::filesystem::filesystem_error& e)
+    catch (const wendfyr::domain::errors::FileNotFoundException& e)
     {
-        std::cerr << " Filesystem error: " << e.what() << '\n';
+        std::cerr << "  File not found:  " << e.path().string() << '\n';
         return EXIT_FAILURE;
+    }
+    catch (const wendfyr::domain::errors::PermissionDeniedException& e)
+    {
+        std::cerr << "  Perminsion denied:  " << e.path().string() << '\n';
+        return EXIT_FAILURE;
+    }
+    catch (const wendfyr::domain::errors::DiskFullException& e)
+    {
+        std::cerr << "  Disk full at:  " << e.path().string() << '\n';
+        return EXIT_FAILURE;
+    }
+    catch (const wendfyr::domain::errors::OperationCancelledException& e)
+    {
+        return EXIT_FAILURE;
+    }
+    catch (const wendfyr::domain::errors::WendfyrError& e)
+    {
+        std::cerr << "  Error:  " << e.what() << '\n';
     }
     catch (const std::exception& e)
     {
-        std::cerr << " Error: " << e.what() << '\n';
+        std::cerr << "  Unexpected error:  " << e.what() << '\n';
         return EXIT_FAILURE;
     }
 }

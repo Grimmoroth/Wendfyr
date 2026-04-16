@@ -9,6 +9,30 @@
 
 namespace wendfyr::infrastructure
 {
+
+    namespace
+    {
+        [[noreturn]] void translateError(const std::error_code& code,
+                                         const std::filesystem::path& ctx_path)
+        {
+            if (code == std::errc::no_such_file_or_directory)
+            {
+                throw domain::errors::FileNotFoundException(ctx_path);
+            }
+            if (code == std::errc::permission_denied)
+            {
+                throw domain::errors::PermissionDeniedException(ctx_path);
+            }
+            if (code == std::errc::no_space_on_device)
+            {
+                throw domain::errors::DiskFullException(ctx_path, 0, 0);
+            }
+
+            throw domain::errors::WendfyrError("Filesystem error at: " + ctx_path.string() + ": " +
+                                               code.message());
+        }
+    };  // namespace
+
     std::vector<domain::models::FileEntry> StdFilesystemService::listDirectory(
         const std::filesystem::path& directory_path) const
     {
@@ -63,12 +87,7 @@ namespace wendfyr::infrastructure
         }
         catch (const std::filesystem::filesystem_error& e)
         {
-            if (e.code() == std::errc::permission_denied)
-            {
-                throw domain::errors::PermissionDeniedException(directory_path);
-            }
-
-            throw;
+            translateError(e.code(), directory_path);
         }
 
         return entries;
@@ -85,37 +104,53 @@ namespace wendfyr::infrastructure
         }
         catch (const std::filesystem::filesystem_error& e)
         {
-            if (e.code() == std::errc::no_such_file_or_directory)
-            {
-                throw domain::errors::FileNotFoundException(source);
-            }
-            if (e.code() == std::errc::permission_denied)
-            {
-                throw domain::errors::PermissionDeniedException(source);
-            }
-            if (e.code() == std::errc::no_space_on_device)
-            {
-                throw domain::errors::DiskFullException(destination, 0, 0);  // for now
-            }
-
-            throw;
+            translateError(e.code(), destination);
         }
     }
 
     void StdFilesystemService::move(const std::filesystem::path& source,
                                     const std::filesystem::path& destination) const
     {
-        std::filesystem::rename(source, destination);
+        try
+        {
+            std::filesystem::rename(source, destination);
+            return;
+        }
+        catch (const std::filesystem::filesystem_error& e)
+        {
+            if (e.code() != std::errc::cross_device_link)
+            {
+                translateError(e.code(), source);
+            }
+        }
+
+        spdlog::info("Cross device move: {} -> {}", source.string(), destination.string());
+        copy(source, destination);
+        remove(source);
     }
 
     void StdFilesystemService::remove(const std::filesystem::path& target) const
     {
-        std::filesystem::remove_all(target);
+        try
+        {
+            std::filesystem::remove_all(target);
+        }
+        catch (std::filesystem::filesystem_error& e)
+        {
+            translateError(e.code(), target);
+        }
     }
 
     void StdFilesystemService::createDirectory(const std::filesystem::path& directory_path) const
     {
-        std::filesystem::create_directories(directory_path);
+        try
+        {
+            std::filesystem::create_directories(directory_path);
+        }
+        catch (std::filesystem::filesystem_error& e)
+        {
+            translateError(e.code(), directory_path);
+        }
     }
 
     bool StdFilesystemService::exist(const std::filesystem::path& target) const
