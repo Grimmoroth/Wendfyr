@@ -20,10 +20,10 @@ namespace wendfyr::tests
         testing::NiceMock<mocks::MockFilesystemService> mock_fs;
         services::EventBus event_bus;
 
-        // void SetUp() override
-        // {
-        //     ON_CALL(mock_fs, exist(testing::_)).WillByDefault(testing::Return(false));
-        // }
+        void SetUp() override
+        {
+            ON_CALL(mock_fs, exist(testing::_)).WillByDefault(testing::Return(true));
+        }
 
         std::unique_ptr<domain::commands::DeleteCommand> makeSingleDeleteCommand()
         {
@@ -114,10 +114,10 @@ namespace wendfyr::tests
 
         ON_CALL(mock_fs, exist(testing::_)).WillByDefault(testing::Return(true));
 
-        testing::Mock::VerifyAndClearExpectations(&mock_fs);
         EXPECT_CALL(mock_fs, move(testing::_, std::filesystem::path("/home/user/old_file.txt")))
             .Times(1);
-        // EXPECT_CALL(mock_fs, remove(testing::_)).Times(1);
+
+        EXPECT_CALL(mock_fs, remove(testing::_)).Times(1);
 
         cmd->undo();
     }

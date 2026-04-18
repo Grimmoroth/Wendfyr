@@ -49,8 +49,9 @@ namespace wendfyr::domain::commands
         {
             auto backup_path = _backup_directory / target.filename();
             spdlog::info("Deleting {} (backed up to {})", target.string(), backup_path.string());
+
             _fs.move(target, backup_path);
-            _backup_records.emplace_back(target, backup_path);
+            _backup_records.emplace_back(target, std::move(backup_path));
         }
 
         _event_bus.publish(events::FilesDeletedEvent{_targets});
@@ -59,10 +60,9 @@ namespace wendfyr::domain::commands
 
     void DeleteCommand::undo()
     {
-        for (auto it{_backup_records.rbegin()}; it != _backup_records.rbegin(); ++it)
+        for (auto it{_backup_records.rbegin()}; it != _backup_records.rend(); ++it)
         {
             const auto& [original, backup] = *it;
-
             if (_fs.exist(backup))
             {
                 spdlog::info("Undo delete: restoring {} -> {}", backup.string(), original.string());
