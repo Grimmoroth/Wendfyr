@@ -3,6 +3,7 @@
 #include <utility>
 
 #include "domain/commands/copy_command.hpp"
+#include "domain/commands/create_directory_command.hpp"
 #include "domain/commands/delete_command.hpp"
 #include "domain/commands/move_command.hpp"
 
@@ -32,5 +33,12 @@ namespace wendfyr::domain
         std::vector<std::filesystem::path> targets)
     {
         return std::make_unique<commands::DeleteCommand>(std::move(targets), _fs, _event_bus);
+    }
+
+    std::unique_ptr<domain::commands::ICommand> CommandFactory::createCreateDirectoryCommand(
+        std::filesystem::path dir_path)
+    {
+        return std::make_unique<commands::CreateDirectoryCommand>(std::move(dir_path), _fs,
+                                                                  _event_bus);
     }
 };  // namespace wendfyr::domain

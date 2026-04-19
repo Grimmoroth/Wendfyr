@@ -21,6 +21,9 @@ namespace wendfyr::ports::driving
         [[nodiscard]] virtual std::unique_ptr<domain::commands::ICommand> createDeleteCommand(
             std::vector<std::filesystem::path> targets) = 0;
 
+        [[nodiscard]] virtual std::unique_ptr<domain::commands::ICommand>
+        createCreateDirectoryCommand(std::filesystem::path dir_path) = 0;
+
       protected:
         ICommandFactory() = default;
         ICommandFactory(const ICommandFactory&) = default;

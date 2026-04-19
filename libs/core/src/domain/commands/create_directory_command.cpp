@@ -11,7 +11,7 @@
 namespace wendfyr::domain::commands
 {
 
-    CreateDirectoryCommand::CreateDirectoryCommand(std::filesystem::path& dir_path,
+    CreateDirectoryCommand::CreateDirectoryCommand(std::filesystem::path dir_path,
                                                    ports::driven::IFilesystemService& fs,
                                                    services::EventBus& event_bus)
         : _dir_path{std::move(dir_path)}, _fs{fs}, _event_bus{event_bus}
@@ -46,14 +46,14 @@ namespace wendfyr::domain::commands
 
         if (!_fs.exist(_dir_path))
         {
-            spd::warn("Undo create directory: {} already gone", _dir_path.string());
+            spdlog::warn("Undo create directory: {} already gone", _dir_path.string());
             _created = false;
             return;
         }
 
         if (!_fs.listDirectory(_dir_path).empty())
         {
-            spd::warn("Undo create directory: {} is not empty, skipping", _dir_path.string());
+            spdlog::warn("Undo create directory: {} is not empty, skipping", _dir_path.string());
             return;
         }
 

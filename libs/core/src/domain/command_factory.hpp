@@ -28,6 +28,9 @@ namespace wendfyr::domain
         [[nodiscard]] std::unique_ptr<domain::commands::ICommand> createDeleteCommand(
             std::vector<std::filesystem::path> targets) override;
 
+        [[nodiscard]] std::unique_ptr<domain::commands::ICommand> createCreateDirectoryCommand(
+            std::filesystem::path dir_path) override;
+
       private:
         ports::driven::IFilesystemService& _fs;
         services::EventBus& _event_bus;

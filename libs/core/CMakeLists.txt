@@ -12,6 +12,7 @@ set(WF_CORE_SOURCES
     src/domain/commands/copy_command.cpp
     src/domain/commands/delete_command.cpp
     src/domain/commands/move_command.cpp
+    src/domain/commands/create_directory_command.cpp
 
     src/domain/command_factory.cpp
 
@@ -63,6 +64,7 @@ if(BUILD_TESTING)
         tests/unit/copy_command_test.cpp
         tests/unit/move_command_test.cpp
         tests/unit/delete_command_test.cpp
+        tests/unit/create_directory_command_test.cpp
     )
 
     target_include_directories(wf_core_test

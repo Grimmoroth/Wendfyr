@@ -137,6 +137,11 @@ int main(int argc, char** argv)
         delete_cmd->alias("rm");
         delete_cmd->alias("del");
 
+        std::string mkdir_path{};
+        auto* mkdir_cmd{app.add_subcommand("mkdir", "Create Directory")};
+        mkdir_cmd->alias("md");
+        mkdir_cmd->add_option("path", mkdir_path, "Directory to create")->required();
+
         CLI11_PARSE(app, argc, argv);
 
         if (verbose)
@@ -224,6 +229,15 @@ int main(int argc, char** argv)
             ctx.command_executor->execute(std::move(cmd));
 
             std::cout << " Done.\n";
+        }
+        else if (mkdir_cmd->parsed())
+        {
+            auto dir{std::filesystem::absolute(mkdir_path)};
+            std::cout << "  Creating Directory  " << dir.string() << "...\n";
+            auto cmd{ctx.command_factory->createCreateDirectoryCommand(dir)};
+            ctx.command_executor->execute(std::move(cmd));
+
+            std::cout << "  Done.\n";
         }
         return EXIT_SUCCESS;
     }
