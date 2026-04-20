@@ -1,6 +1,5 @@
 #include "wendfyr/bootstrap.hpp"
 #include "wendfyr/domain/errors.hpp"
-#include "wendfyr/domain/events/event.hpp"
 #include "wendfyr/domain/models/file_entry.hpp"
 #include "wendfyr/ports/driving/i_panel_model.hpp"
 
