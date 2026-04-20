@@ -42,6 +42,7 @@ Thumbs.db
 desktop.ini
 
 compile_commands.json
+Testing
 
 *.log
 *.tmp
