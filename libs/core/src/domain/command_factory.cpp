@@ -12,6 +12,7 @@ namespace wendfyr::domain
     CommandFactory::CommandFactory(ports::driven::IFilesystemService& fs,
                                    services::EventBus& event_bus)
         : _fs{fs}, _event_bus{event_bus}
+
     {
     }
 

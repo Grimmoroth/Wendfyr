@@ -2,6 +2,7 @@
 #include "wendfyr/domain/errors.hpp"
 #include "wendfyr/domain/models/file_entry.hpp"
 #include "wendfyr/ports/driving/i_panel_model.hpp"
+#include "wendfyr/services/logging.hpp"
 
 #include <CLI/CLI.hpp>
 #include <spdlog/common.h>
@@ -97,9 +98,10 @@ int main(int argc, char** argv)
         CLI::App app{"Wendfyr - command-line file manager"};
         app.require_subcommand(1);
         bool verbose{false};
+        bool debug{false};
 
         app.add_flag("-v,--verbose", verbose, "Enable verbose logging");
-
+        app.add_flag("--debug", debug, "Enable debug logging");
         std::string list_dir{};
         std::string sort_field{"name"};
         bool sort_descending{false};
@@ -144,14 +146,19 @@ int main(int argc, char** argv)
 
         CLI11_PARSE(app, argc, argv);
 
-        if (verbose)
+        auto log_level{wendfyr::services::logging::LogLevel::WARN};
+        if (debug)
         {
-            spdlog::set_level(spdlog::level::debug);
+            log_level = wendfyr::services::logging::LogLevel::DEBUG;
         }
-        else
+        else if (verbose)
         {
-            spdlog::set_level(spdlog::level::warn);
+            log_level = wendfyr::services::logging::LogLevel::INFO;
         }
+
+        wendfyr::services::logging::initLogging({.console_level = log_level,
+                                                 .enable_file = true,
+                                                 .log_directory = ""});  // TODO: fix this <--
 
         auto home{std::filesystem::current_path()};
         auto ctx{wendfyr::createApplication(home)};
