@@ -63,8 +63,7 @@ namespace wendfyr::services::logging
                     std::cerr << home << '\n';
                     if (home != nullptr)
                     {
-                        log_dir = std::filesystem::path(std::string(home) + "/.local" + "/share" +
-                                                        "/wendfyr");  // TODO: fix it
+                        log_dir = std::filesystem::path(home) / ".local" / "share" / "wendfyr";
                     }
                     else
                     {
