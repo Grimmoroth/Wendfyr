@@ -48,7 +48,7 @@ namespace wendfyr::domain::commands
         for (const auto& target : _targets)
         {
             auto backup_path = _backup_directory / target.filename();
-            spdlog::info("Deleting {} (backed up to {})", target.string(), backup_path.string());
+            spdlog::debug("Deleting {} (backed up to {})", target.string(), backup_path.string());
 
             _fs.move(target, backup_path);
             _backup_records.emplace_back(target, std::move(backup_path));
@@ -65,7 +65,8 @@ namespace wendfyr::domain::commands
             const auto& [original, backup] = *it;
             if (_fs.exist(backup))
             {
-                spdlog::info("Undo delete: restoring {} -> {}", backup.string(), original.string());
+                spdlog::debug("Undo delete: restoring {} -> {}", backup.string(),
+                              original.string());
                 _fs.move(backup, original);
             }
             else

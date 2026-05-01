@@ -7,6 +7,7 @@
 #include <filesystem>
 #include <iostream>
 #include <memory>
+#include <string>
 
 namespace wendfyr::services::logging
 {
@@ -58,10 +59,12 @@ namespace wendfyr::services::logging
                 auto log_dir{config.log_directory};
                 if (log_dir.empty())
                 {
-                    const char* home = std::getenv("HOME");
+                    const char* home{std::getenv("HOME")};
+                    std::cerr << home << '\n';
                     if (home != nullptr)
                     {
-                        log_dir = std::filesystem::path(home) / "./local" / "share" / "wendfyr";
+                        log_dir = std::filesystem::path(std::string(home) + "/.local" + "/share" +
+                                                        "/wendfyr");  // TODO: fix it
                     }
                     else
                     {

@@ -24,7 +24,7 @@ namespace wendfyr::services::logging
         bool enable_console{true};
         LogLevel file_level{LogLevel::DEBUG};
         bool enable_file{true};
-        std::filesystem::path log_directory;
+        std::filesystem::path log_directory{};
         std::string log_filename{"wendfyr.log"};
         std::size_t max_file_size{5 * 1024 * 1025};
         std::size_t max_files{3};

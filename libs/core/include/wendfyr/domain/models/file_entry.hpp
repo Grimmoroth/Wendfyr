@@ -1,7 +1,6 @@
 #ifndef WENDFYR_DOMAIN_MODELS_FILE_ENTRY_HPP
 #define WENDFYR_DOMAIN_MODELS_FILE_ENTRY_HPP
 
-#include <chrono>
 #include <cstdint>
 #include <filesystem>
 #include <string>
@@ -18,8 +17,8 @@ namespace wendfyr::domain::models
 
     struct FileEntry
     {
-        std::filesystem::path path;  // fix the clang-tidy for struct to remove the _
-        std::string name;            // probably can use std::string_view
+        std::filesystem::path path;
+        std::string name;
         std::uintmax_t size{0};
         EntryType type{EntryType::UNKNOWN};
         std::filesystem::file_time_type last_modified;

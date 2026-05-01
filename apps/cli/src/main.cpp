@@ -156,9 +156,7 @@ int main(int argc, char** argv)
             log_level = wendfyr::services::logging::LogLevel::INFO;
         }
 
-        wendfyr::services::logging::initLogging({.console_level = log_level,
-                                                 .enable_file = true,
-                                                 .log_directory = ""});  // TODO: fix this <--
+        wendfyr::services::logging::initLogging({.console_level = log_level, .enable_file = true});
 
         auto home{std::filesystem::current_path()};
         auto ctx{wendfyr::createApplication(home)};

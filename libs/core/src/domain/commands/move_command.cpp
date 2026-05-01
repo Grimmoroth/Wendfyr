@@ -25,7 +25,7 @@ namespace wendfyr::domain::commands
         for (const auto& source : _sources)
         {
             auto target = _destination / source.filename();
-            spdlog::info("Moving {} -> {}", source.string(), target.string());
+            spdlog::debug("Moving {} -> {}", source.string(), target.string());
             _fs.move(source, target);
             _moved_records.emplace_back(source, target);
         }
@@ -41,7 +41,7 @@ namespace wendfyr::domain::commands
             auto [original, moved] = *it;
             if (_fs.exist(moved))
             {
-                spdlog::info("Undo move: {} -> {}", moved.string(), original.string());
+                spdlog::debug("Undo move: {} -> {}", moved.string(), original.string());
                 _fs.move(moved, original);
             }
             else

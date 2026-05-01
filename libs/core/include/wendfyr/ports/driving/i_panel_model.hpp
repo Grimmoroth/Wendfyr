@@ -6,6 +6,7 @@
 #include <cstddef>
 #include <filesystem>
 #include <span>
+#include <vector>
 
 namespace wendfyr::ports::driving
 {
