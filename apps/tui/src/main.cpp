@@ -201,7 +201,7 @@ int main()
                     return true;
                 }
                 auto* active_panel{left_active ? left_panel : right_panel};
-                auto cursor{left_active ? left_cursor : right_cursor};
+                auto& cursor{left_active ? left_cursor : right_cursor};
                 int entry_count{
                     static_cast<int>(active_panel->entryCount())};
 
