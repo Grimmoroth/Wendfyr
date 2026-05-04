@@ -12,7 +12,7 @@ AccessModifierOffset: -2
 LambdaBodyIndentation: Signature
 
 # Column limit
-ColumnLimit: 100
+ColumnLimit: 75
 
 # Braces on same line
 BreakBeforeBraces: Allman
