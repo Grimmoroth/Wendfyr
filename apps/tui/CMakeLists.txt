@@ -1,5 +1,6 @@
 add_executable(wf_tui
     src/main.cpp
+    src/panel_view.cpp
 )
 
 target_link_libraries(wf_tui
