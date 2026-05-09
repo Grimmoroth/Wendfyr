@@ -2,12 +2,13 @@
 
 #include <spdlog/spdlog.h>
 
+#include <format>
+
 #include "domain/command_executor.hpp"
 #include "domain/command_factory.hpp"
 #include "domain/panel_model.hpp"
 #include "infrastructure/json_config_service.hpp"
 #include "infrastructure/std_filesystem_service.hpp"
-
 namespace wendfyr
 {
     ApplicationContext::ApplicationContext(
@@ -28,7 +29,8 @@ namespace wendfyr
     {
     }
 
-    ApplicationContext createApplication(const std::filesystem::path& start_directory)
+    ApplicationContext createApplication(
+        const std::filesystem::path& start_directory)
     {
         spdlog::info("Initializing Wendfyr...");
 
@@ -37,25 +39,34 @@ namespace wendfyr
         auto fs = std::make_shared<infrastructure::StdFilesystemService>();
 
         // Config
-        auto config_path = start_directory / ".config" / "wendfyr" / "config.json";
-        auto config = std::make_shared<infrastructure::JsonConfigService>(config_path);
+        auto config_path =
+            start_directory / ".config" / "wendfyr" / "config.json";
+        auto config = std::make_shared<infrastructure::JsonConfigService>(
+            config_path);
         config->load();
 
-        spdlog::info("Config loaded from {}", config_path.string());
+        spdlog::info(
+            std::format("Config loaded from {}", config_path.string()));
 
         // Domain Services
-        auto executor = std::make_unique<domain::CommandExecutor>(*event_bus);
-        auto factory = std::make_unique<domain::CommandFactory>(*fs, *event_bus);
+        auto executor =
+            std::make_unique<domain::CommandExecutor>(*event_bus);
+        auto factory =
+            std::make_unique<domain::CommandFactory>(*fs, *event_bus);
 
         // Panels
-        auto left_panel = std::make_unique<domain::PanelModel>(*fs, *event_bus, start_directory);
-        auto right_panel = std::make_unique<domain::PanelModel>(*fs, *event_bus, start_directory);
+        auto left_panel = std::make_unique<domain::PanelModel>(
+            *fs, *event_bus, start_directory);
+        auto right_panel = std::make_unique<domain::PanelModel>(
+            *fs, *event_bus, start_directory);
 
-        spdlog::info("Wendfyr initialized. Start directory: {}", start_directory.string());
+        spdlog::info("Wendfyr initialized. Start directory: {}",
+                     start_directory.string());
 
         return ApplicationContext{
-            std::move(event_bus),   std::move(fs),      std::move(config),
-            std::move(executor),    std::move(factory), std::move(left_panel),
+            std::move(event_bus),   std::move(fs),
+            std::move(config),      std::move(executor),
+            std::move(factory),     std::move(left_panel),
             std::move(right_panel),
         };
     }
