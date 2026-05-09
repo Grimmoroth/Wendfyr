@@ -1,5 +1,6 @@
 #ifndef WENDFYR_TUI_PANEL_VIEW_HPP
 #define WENDFYR_TUIPANEL_VIEW_HPP
+
 #include "wendfyr/domain/models/file_entry.hpp"
 #include "wendfyr/ports/driving/i_panel_model.hpp"  // TODO: Might better to Forward declare
 
