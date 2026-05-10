@@ -60,8 +60,9 @@ namespace wendfyr
         auto right_panel = std::make_unique<domain::PanelModel>(
             *fs, *event_bus, start_directory);
 
-        spdlog::info("Wendfyr initialized. Start directory: {}",
-                     start_directory.string());
+        spdlog::info(
+            std::format("Wendfyr initialized. Start directory: {}",
+                        start_directory.string()));
 
         return ApplicationContext{
             std::move(event_bus),   std::move(fs),
