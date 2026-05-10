@@ -9,6 +9,7 @@
 #include "domain/panel_model.hpp"
 #include "infrastructure/json_config_service.hpp"
 #include "infrastructure/std_filesystem_service.hpp"
+
 namespace wendfyr
 {
     ApplicationContext::ApplicationContext(
