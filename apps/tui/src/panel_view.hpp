@@ -1,14 +1,27 @@
 #ifndef WENDFYR_TUI_PANEL_VIEW_HPP
 #define WENDFYR_TUI_PANEL_VIEW_HPP
 
-#include "wendfyr/domain/models/file_entry.hpp"
-#include "wendfyr/ports/driving/i_panel_model.hpp"  // TODO: Might better to Forward declare
-
-#include <ftxui/dom/elements.hpp>  // TODO: Same...forward declare
-
 #include <cstddef>
+#include <filesystem>
 #include <string>
 #include <vector>
+
+namespace ftxui
+{
+    class Node;
+    using Element = std::shared_ptr<Node>;
+    using Elements = std::vector<Element>;
+};  // namespace ftxui
+
+namespace wendfyr::domain::models
+{
+    struct FileEntry;
+};
+
+namespace wendfyr::ports::driving
+{
+    class IPanelModel;
+};
 
 namespace wendfyr::tui
 {
@@ -37,7 +50,7 @@ namespace wendfyr::tui
         selectedEntries() const;
 
         [[nodiscard]] const domain::models::FileEntry* currentEntry()
-            const;  // FIX: Should be <optional>
+            const;
 
       private:
         [[nodiscard]] static std::string formatSize(std::uintmax_t bytes);

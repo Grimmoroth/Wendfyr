@@ -1,6 +1,7 @@
 #include "panel_view.hpp"
 
 #include "wendfyr/domain/models/file_entry.hpp"
+#include "wendfyr/ports/driving/i_panel_model.hpp"
 
 #include <ftxui/dom/elements.hpp>
 

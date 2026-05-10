@@ -5,9 +5,7 @@
 #include <vector>
 
 // #include "panel_view.hpp"
-// #include "wendfyr/ports/driving/i_command_executor.hpp"
-// #include "wendfyr/ports/driving/i_command_factory.hpp"
-
+#include <ftxui/component/event.hpp>
 namespace wendfyr::ports::driving
 {
     class ICommandExecutor;
@@ -17,7 +15,7 @@ namespace wendfyr::ports::driving
 namespace ftxui
 {
     class ScreenInteractive;
-    class Event;
+    struct Event;
 };  // namespace ftxui
 
 namespace wendfyr::tui
