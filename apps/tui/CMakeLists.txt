@@ -5,6 +5,10 @@ add_executable(wf_tui
     src/command_bar.cpp
 )
 
+target_compile_features(wf_tui PRIVATE cxx_std_23)
+
+target_precompile_headers(wf_tui REUSE_FROM Wendfyr::Core)
+
 target_link_libraries(wf_tui
     PRIVATE
         Wendfyr::Core

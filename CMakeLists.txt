@@ -20,7 +20,6 @@ endif()
 set(CMAKE_CXX_STANDARD 23)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXSTENSIONS OFF)
-#   Symlink it to the project root so editors find it automatically:
 #   ln -s build/compile_commands.json compile_commands.json
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
@@ -62,4 +61,4 @@ endif()
 if(BUILD_TESTING)
     add_subdirectory(tests)
 endif()
-    
+

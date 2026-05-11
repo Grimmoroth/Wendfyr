@@ -2,6 +2,9 @@ add_executable(wf_cli
     src/main.cpp
 )
 
+target_compile_features(wf_cli PRIVATE cxx_std_23)
+target_precompile_headers(wf_cli REUSE_FROM Wendfyr::Core)
+
 target_link_libraries(wf_cli
     PRIVATE
         Wendfyr::Core

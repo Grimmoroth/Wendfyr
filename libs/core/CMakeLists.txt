@@ -39,6 +39,8 @@ set(WF_CORE_SOURCES
 
 add_library(wendfyr_core STATIC ${WF_CORE_SOURCES})
 
+target_compile_features(wendfyr_core PUBLIC cxx_std_23)
+
 target_include_directories(wendfyr_core
     PUBLIC
     ${CMAKE_CURRENT_SOURCE_DIR}/include
