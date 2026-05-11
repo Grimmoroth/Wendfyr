@@ -30,19 +30,23 @@ namespace
 
         if (bytes >= TB)
         {
-            out << static_cast<double>(bytes) / static_cast<double>(TB) << " TB";
+            out << static_cast<double>(bytes) / static_cast<double>(TB)
+                << " TB";
         }
         else if (bytes >= GB)
         {
-            out << static_cast<double>(bytes) / static_cast<double>(GB) << " GB";
+            out << static_cast<double>(bytes) / static_cast<double>(GB)
+                << " GB";
         }
         else if (bytes >= MB)
         {
-            out << static_cast<double>(bytes) / static_cast<double>(MB) << " MB";
+            out << static_cast<double>(bytes) / static_cast<double>(MB)
+                << " MB";
         }
         else if (bytes >= KB)
         {
-            out << static_cast<double>(bytes) / static_cast<double>(KB) << " KB";
+            out << static_cast<double>(bytes) / static_cast<double>(KB)
+                << " KB";
         }
         else
         {
@@ -76,11 +80,13 @@ namespace
                     break;
             }
 
-            std::cout << "  " << type_marker << std::left << std::setw(35) << entry.name;
+            std::cout << "  " << type_marker << std::left << std::setw(35)
+                      << entry.name;
 
             if (entry.type == wendfyr::domain::models::EntryType::FILE)
             {
-                std::cout << std::right << std::setw(10) << formatSize(entry.size);
+                std::cout << std::right << std::setw(10)
+                          << formatSize(entry.size);
             }
 
             std::cout << '\n';
@@ -107,25 +113,36 @@ int main(int argc, char** argv)
         bool sort_descending{false};
 
         // LIST
-        auto* list_cmd{app.add_subcommand("list", "List directory contents")};
-        list_cmd->add_option("directory", list_dir, "Directory to list")->default_val(".");
-        list_cmd->add_option("--sort,-s", sort_field, "Sort by: name, size, date")
+        auto* list_cmd{
+            app.add_subcommand("list", "List directory contents")};
+        list_cmd->add_option("directory", list_dir, "Directory to list")
+            ->default_val(".");
+        list_cmd
+            ->add_option("--sort,-s", sort_field,
+                         "Sort by: name, size, date")
             ->default_val("name");
-        list_cmd->add_flag("--desc,-d", sort_descending, "Sort descending");
+        list_cmd->add_flag("--desc,-d", sort_descending,
+                           "Sort descending");
         list_cmd->alias("ls");
 
         // COPY
         std::vector<std::string> copy_args;
-        auto* copy_cmd{app.add_subcommand("copy", "Copy files to destination")};
-        copy_cmd->add_option("paths", copy_args, "Source files and destination")
+        auto* copy_cmd{
+            app.add_subcommand("copy", "Copy files to destination")};
+        copy_cmd
+            ->add_option("paths", copy_args,
+                         "Source files and destination")
             ->required()
             ->expected(-2);
         copy_cmd->alias("cp");
 
         // MOVE
         std::vector<std::string> move_args;
-        auto* move_cmd{app.add_subcommand("move", "Move files to destination")};
-        move_cmd->add_option("paths", move_args, "Source files and destination")
+        auto* move_cmd{
+            app.add_subcommand("move", "Move files to destination")};
+        move_cmd
+            ->add_option("paths", move_args,
+                         "Source files and destination")
             ->required()
             ->expected(-2);
         move_cmd->alias("mv");
@@ -133,7 +150,8 @@ int main(int argc, char** argv)
         // Delete
         std::vector<std::string> delete_targets;
         auto* delete_cmd{app.add_subcommand("delete", "Delete files")};
-        delete_cmd->add_option("targets", delete_targets, "Files to delete")
+        delete_cmd
+            ->add_option("targets", delete_targets, "Files to delete")
             ->required()
             ->expected(-1);
         delete_cmd->alias("rm");
@@ -142,7 +160,8 @@ int main(int argc, char** argv)
         std::string mkdir_path{};
         auto* mkdir_cmd{app.add_subcommand("mkdir", "Create Directory")};
         mkdir_cmd->alias("md");
-        mkdir_cmd->add_option("path", mkdir_path, "Directory to create")->required();
+        mkdir_cmd->add_option("path", mkdir_path, "Directory to create")
+            ->required();
 
         CLI11_PARSE(app, argc, argv);
 
@@ -156,7 +175,8 @@ int main(int argc, char** argv)
             log_level = wendfyr::services::logging::LogLevel::INFO;
         }
 
-        wendfyr::services::logging::initLogging({.console_level = log_level, .enable_file = true});
+        wendfyr::services::logging::initLogging(
+            {.console_level = log_level, .enable_file = true});
 
         auto home{std::filesystem::current_path()};
         auto ctx{wendfyr::createApplication(home)};
@@ -176,11 +196,14 @@ int main(int argc, char** argv)
                 }
                 if (sort_field == "date")
                 {
-                    field = wendfyr::ports::driving::SortField::LAST_MODIFIED;
+                    field =
+                        wendfyr::ports::driving::SortField::LAST_MODIFIED;
                 }
 
-                auto order{sort_descending ? wendfyr::ports::driving::SortOrder::DESCENDING
-                                           : wendfyr::ports::driving::SortOrder::ASCENDING};
+                auto order{
+                    sort_descending
+                        ? wendfyr::ports::driving::SortOrder::DESCENDING
+                        : wendfyr::ports::driving::SortOrder::ASCENDING};
 
                 ctx.left_panel->sortBy(field, order);
                 printListing(*ctx.left_panel);
@@ -197,9 +220,11 @@ int main(int argc, char** argv)
                 sources.push_back(std::filesystem::absolute(copy_args[i]));
             }
 
-            std::cout << " Copying " << sources.size() << " file(s) to" << dest.string() << "...\n";
+            std::cout << " Copying " << sources.size() << " file(s) to"
+                      << dest.string() << "...\n";
 
-            auto cmd{ctx.command_factory->createCopyCommand(std::move(sources), dest)};
+            auto cmd{ctx.command_factory->createCopyCommand(
+                std::move(sources), dest)};
             ctx.command_executor->execute(std::move(cmd));
 
             std::cout << "Done.\n";
@@ -214,8 +239,10 @@ int main(int argc, char** argv)
             {
                 sources.push_back(std::filesystem::absolute(move_args[i]));
             }
-            std::cout << " Moving " << sources.size() << " file(s) to" << dest.string() << "...\n";
-            auto cmd{ctx.command_factory->createMoveCommand(std::move(sources), dest)};
+            std::cout << " Moving " << sources.size() << " file(s) to"
+                      << dest.string() << "...\n";
+            auto cmd{ctx.command_factory->createMoveCommand(
+                std::move(sources), dest)};
             ctx.command_executor->execute(std::move(cmd));
 
             std::cout << "Done.\n";
@@ -230,7 +257,8 @@ int main(int argc, char** argv)
             }
 
             std::cout << " Deleting " << targets.size() << " file(s)...\n";
-            auto cmd{ctx.command_factory->createDeleteCommand(std::move(targets))};
+            auto cmd{ctx.command_factory->createDeleteCommand(
+                std::move(targets))};
             ctx.command_executor->execute(std::move(cmd));
 
             std::cout << " Done.\n";
@@ -238,8 +266,10 @@ int main(int argc, char** argv)
         else if (mkdir_cmd->parsed())
         {
             auto dir{std::filesystem::absolute(mkdir_path)};
-            std::cout << "  Creating Directory  " << dir.string() << "...\n";
-            auto cmd{ctx.command_factory->createCreateDirectoryCommand(dir)};
+            std::cout << "  Creating Directory  " << dir.string()
+                      << "...\n";
+            auto cmd{
+                ctx.command_factory->createCreateDirectoryCommand(dir)};
             ctx.command_executor->execute(std::move(cmd));
 
             std::cout << "  Done.\n";
@@ -261,9 +291,10 @@ int main(int argc, char** argv)
         std::cerr << "  Disk full at:  " << e.path().string() << '\n';
         return EXIT_FAILURE;
     }
-    catch (const wendfyr::domain::errors::FileAlreadyExcistsException& e)
+    catch (const wendfyr::domain::errors::FileAlreadyExistsException& e)
     {
-        std::cerr << "  File already exists: " << e.path().string() << '\n';
+        std::cerr << "  File already exists: " << e.path().string()
+                  << '\n';
         return EXIT_FAILURE;
     }
     catch (const wendfyr::domain::errors::OperationCancelledException& e)

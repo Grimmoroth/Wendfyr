@@ -10,7 +10,8 @@
 namespace wendfyr::services
 {
     using SubscriptionId = std::size_t;
-    using EventCallback = std::function<void(const domain::events::Event&)>;
+    using EventCallback =
+        std::function<void(const domain::events::Event&)>;
 
     class EventBus
     {

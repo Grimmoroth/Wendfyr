@@ -13,15 +13,19 @@ namespace wendfyr::infrastructure
     {
       public:
         explicit JsonConfigService(std::filesystem::path config_file_path);
-        [[nodiscard]] std::optional<std::string> getString(const std::string& key) const override;
-        void setString(const std::string& key, const std::string& value) override;
+        [[nodiscard]] std::optional<std::string> getString(
+            const std::string& key) const override;
+        void setString(const std::string& key,
+                       const std::string& value) override;
         void load() override;
         void save() override;
         [[nodiscard]] bool hasKey(const std::string& key) const override;
 
       private:
-        [[nodiscard]] const nlohmann::json* navigateTo(const std::string& key) const;
-        [[nodiscard]] nlohmann::json& navigateOrCreate(const std::string& key);
+        [[nodiscard]] const nlohmann::json* navigateTo(
+            const std::string& key) const;
+        [[nodiscard]] nlohmann::json& navigateOrCreate(
+            const std::string& key);
 
         std::filesystem::path _config_file_path;
         nlohmann::json _data;

@@ -1,19 +1,10 @@
 #ifndef WENDFYR_DOMAIN_COMMANDS_CREATE_DIRECTORY_COMMAND_CPP
 #define WENDFYR_DOMAIN_COMMANDS_CREATE_DIRECTORY_COMMAND_CPP
 #include "wendfyr/domain/commands/i_command.hpp"
+#include "wendfyr/fwd.hpp"
 
 #include <filesystem>
 #include <string>
-
-namespace wendfyr::ports::driven
-{
-    class IFilesystemService;
-};
-
-namespace wendfyr::services
-{
-    class EventBus;
-};
 
 namespace wendfyr::domain::commands
 {

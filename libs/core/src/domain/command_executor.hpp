@@ -1,15 +1,11 @@
 #ifndef WENDFYR_DOMAIN_COMMAND_EXECUTOR_HPP
 #define WENDFYR_DOMAIN_COMMAND_EXECUTOR_HPP
 
+#include "wendfyr/fwd.hpp"
 #include "wendfyr/ports/driving/i_command_executor.hpp"
 
 #include <memory>
 #include <vector>
-
-namespace wendfyr::services
-{
-    class EventBus;
-};
 
 namespace wendfyr::domain
 {
@@ -23,8 +19,10 @@ namespace wendfyr::domain
         void redo() override;
         [[nodiscard]] bool canUndo() const noexcept override;
         [[nodiscard]] bool canRedo() const noexcept override;
-        [[nodiscard]] std::string undoDescription() const noexcept override;
-        [[nodiscard]] std::string redoDescription() const noexcept override;
+        [[nodiscard]] std::string undoDescription()
+            const noexcept override;
+        [[nodiscard]] std::string redoDescription()
+            const noexcept override;
 
       private:
         std::vector<std::unique_ptr<commands::ICommand>> _undo_stack;

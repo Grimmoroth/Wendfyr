@@ -19,22 +19,25 @@ namespace wendfyr
         ApplicationContext() = default;
         std::shared_ptr<services::EventBus> _event_bus;
         std::shared_ptr<ports::driven::IFilesystemService> _fs;
-        friend ApplicationContext createApplication(const std::filesystem::path& start_directory);
+        friend ApplicationContext createApplication(
+            const std::filesystem::path& start_directory);
 
-        ApplicationContext(std::shared_ptr<services::EventBus> event_bus,
-                           std::shared_ptr<ports::driven::IFilesystemService> fs,
-                           std::shared_ptr<ports::driven::IConfigService> config,
-                           std::unique_ptr<ports::driving::ICommandExecutor> executor,
-                           std::unique_ptr<ports::driving::ICommandFactory> factory,
-                           std::unique_ptr<ports::driving::IPanelModel> left,
-                           std::unique_ptr<ports::driving::IPanelModel> right);
+        ApplicationContext(
+            std::shared_ptr<services::EventBus> event_bus,
+            std::shared_ptr<ports::driven::IFilesystemService> fs,
+            std::shared_ptr<ports::driven::IConfigService> config,
+            std::unique_ptr<ports::driving::ICommandExecutor> executor,
+            std::unique_ptr<ports::driving::ICommandFactory> factory,
+            std::unique_ptr<ports::driving::IPanelModel> left,
+            std::unique_ptr<ports::driving::IPanelModel> right);
 
       public:
         ~ApplicationContext() = default;
         ApplicationContext(const ApplicationContext&) = delete;
         ApplicationContext& operator=(const ApplicationContext&) = delete;
         ApplicationContext(ApplicationContext&&) noexcept = default;
-        ApplicationContext& operator=(ApplicationContext&&) noexcept = default;
+        ApplicationContext& operator=(ApplicationContext&&) noexcept =
+            default;
 
         std::shared_ptr<ports::driven::IConfigService> config_service;
         std::unique_ptr<ports::driving::ICommandExecutor> command_executor;

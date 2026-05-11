@@ -1,5 +1,12 @@
 #include "wendfyr/bootstrap.hpp"
 
+#include "wendfyr/ports/driven/i_config_service.hpp"
+#include "wendfyr/ports/driven/i_filesystem_service.hpp"
+#include "wendfyr/ports/driving/i_command_executor.hpp"
+#include "wendfyr/ports/driving/i_command_factory.hpp"
+#include "wendfyr/ports/driving/i_panel_model.hpp"
+#include "wendfyr/services/event_bus.hpp"
+
 #include <spdlog/spdlog.h>
 
 #include <format>

@@ -1,16 +1,10 @@
 #ifndef WENDFYR_TUI_INPUT_HANDLER_HPP
 #define WENDFYR_TUI_INPUT_HANDLER_HPP
 
+#include "wendfyr/fwd.hpp"
+
 #include <filesystem>
 #include <vector>
-
-// #include "panel_view.hpp"
-#include <ftxui/component/event.hpp>
-namespace wendfyr::ports::driving
-{
-    class ICommandExecutor;
-    class ICommandFactory;
-};  // namespace wendfyr::ports::driving
 
 namespace ftxui
 {

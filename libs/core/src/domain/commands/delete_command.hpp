@@ -2,21 +2,12 @@
 #define WENDFYR_DOMAIN_COMMANDS_DELETE_COMMAND_HPP
 
 #include "wendfyr/domain/commands/i_command.hpp"
+#include "wendfyr/fwd.hpp"
 
 #include <filesystem>
 #include <string>
 #include <utility>
 #include <vector>
-
-namespace wendfyr::ports::driven
-{
-    class IFilesystemService;
-};
-
-namespace wendfyr::services
-{
-    class EventBus;
-}
 
 namespace wendfyr::domain::commands
 {
@@ -25,11 +16,12 @@ namespace wendfyr::domain::commands
     {
       public:
         DeleteCommand(std::vector<std::filesystem::path> targets,
-                      ports::driven::IFilesystemService& fs, services::EventBus& event_bus);
+                      ports::driven::IFilesystemService& fs,
+                      services::EventBus& event_bus);
         DeleteCommand(DeleteCommand&) = delete;
         DeleteCommand& operator=(DeleteCommand&) = delete;
         DeleteCommand(DeleteCommand&&) noexcept = default;
-        DeleteCommand& operator=(DeleteCommand&&) noexcept = default;
+        DeleteCommand& operator=(DeleteCommand&&) noexcept = delete;
         ~DeleteCommand() override;
 
         void execute() override;
@@ -43,7 +35,9 @@ namespace wendfyr::domain::commands
 
         std::filesystem::path _backup_directory;
 
-        std::vector<std::pair<std::filesystem::path, std::filesystem::path>> _backup_records;
+        std::vector<
+            std::pair<std::filesystem::path, std::filesystem::path>>
+            _backup_records;
     };
 };  // namespace wendfyr::domain::commands
 

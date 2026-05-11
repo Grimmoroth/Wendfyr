@@ -12,8 +12,9 @@ namespace wendfyr::infrastructure
 
     namespace
     {
-        [[noreturn]] void translateError(const std::error_code& code,
-                                         const std::filesystem::path& ctx_path)
+        [[noreturn]] void translateError(
+            const std::error_code& code,
+            const std::filesystem::path& ctx_path)
         {
             if (code == std::errc::no_such_file_or_directory)
             {
@@ -29,15 +30,17 @@ namespace wendfyr::infrastructure
             }
             if (code == std::errc::file_exists)
             {
-                throw domain::errors::FileAlreadyExcistsException(ctx_path);
+                throw domain::errors::FileAlreadyExistsException(ctx_path);
             }
 
-            throw domain::errors::WendfyrError("Filesystem error at: " + ctx_path.string() + ": " +
-                                               code.message());
+            throw domain::errors::WendfyrError(
+                "Filesystem error at: " + ctx_path.string() + ": " +
+                code.message());
         }
     };  // namespace
 
-    std::vector<domain::models::FileEntry> StdFilesystemService::listDirectory(
+    std::vector<domain::models::FileEntry>
+    StdFilesystemService::listDirectory(
         const std::filesystem::path& directory_path) const
     {
         if (!std::filesystem::exists(directory_path))
@@ -47,13 +50,15 @@ namespace wendfyr::infrastructure
 
         if (!std::filesystem::is_directory(directory_path))
         {
-            throw domain::errors::InvalidPathException(directory_path, "not a directory");
+            throw domain::errors::InvalidPathException(directory_path,
+                                                       "not a directory");
         }
 
         std::vector<domain::models::FileEntry> entries;
         try
         {
-            for (const auto& dir_entry : std::filesystem::directory_iterator(directory_path))
+            for (const auto& dir_entry :
+                 std::filesystem::directory_iterator(directory_path))
             {
                 try
                 {
@@ -85,7 +90,8 @@ namespace wendfyr::infrastructure
                 }
                 catch (std::filesystem::filesystem_error& e)
                 {
-                    spdlog::warn("Cannot read {} : {}", dir_entry.path().string(), e.what());
+                    spdlog::warn("Cannot read {} : {}",
+                                 dir_entry.path().string(), e.what());
                 }
             }
         }
@@ -97,14 +103,16 @@ namespace wendfyr::infrastructure
         return entries;
     }
 
-    void StdFilesystemService::copy(const std::filesystem::path& source,
-                                    const std::filesystem::path& destination) const
+    void StdFilesystemService::copy(
+        const std::filesystem::path& source,
+        const std::filesystem::path& destination) const
     {
         try
         {
-            std::filesystem::copy(source, destination,
-                                  std::filesystem::copy_options::recursive |
-                                      std::filesystem::copy_options::overwrite_existing);
+            std::filesystem::copy(
+                source, destination,
+                std::filesystem::copy_options::recursive |
+                    std::filesystem::copy_options::overwrite_existing);
         }
         catch (const std::filesystem::filesystem_error& e)
         {
@@ -112,8 +120,9 @@ namespace wendfyr::infrastructure
         }
     }
 
-    void StdFilesystemService::move(const std::filesystem::path& source,
-                                    const std::filesystem::path& destination) const
+    void StdFilesystemService::move(
+        const std::filesystem::path& source,
+        const std::filesystem::path& destination) const
     {
         try
         {
@@ -128,12 +137,14 @@ namespace wendfyr::infrastructure
             }
         }
 
-        spdlog::info("Cross device move: {} -> {}", source.string(), destination.string());
+        spdlog::info("Cross device move: {} -> {}", source.string(),
+                     destination.string());
         copy(source, destination);
         remove(source);
     }
 
-    void StdFilesystemService::remove(const std::filesystem::path& target) const
+    void StdFilesystemService::remove(
+        const std::filesystem::path& target) const
     {
         try
         {
@@ -145,7 +156,8 @@ namespace wendfyr::infrastructure
         }
     }
 
-    void StdFilesystemService::createDirectory(const std::filesystem::path& directory_path) const
+    void StdFilesystemService::createDirectory(
+        const std::filesystem::path& directory_path) const
     {
         try
         {
@@ -157,17 +169,20 @@ namespace wendfyr::infrastructure
         }
     }
 
-    bool StdFilesystemService::exist(const std::filesystem::path& target) const
+    bool StdFilesystemService::exist(
+        const std::filesystem::path& target) const
     {
         return std::filesystem::exists(target);
     }
 
-    bool StdFilesystemService::isDirectory(const std::filesystem::path& target) const
+    bool StdFilesystemService::isDirectory(
+        const std::filesystem::path& target) const
     {
         return std::filesystem::is_directory(target);
     }
 
-    std::uintmax_t StdFilesystemService::fileSize(const std::filesystem::path& target) const
+    std::uintmax_t StdFilesystemService::fileSize(
+        const std::filesystem::path& target) const
     {
         return std::filesystem::file_size(target);
     }

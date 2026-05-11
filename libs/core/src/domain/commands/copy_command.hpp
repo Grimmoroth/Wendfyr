@@ -2,27 +2,21 @@
 #define WENDFYR_DOMAIN_COMMANDS_COPY_COMMAND_HPP
 
 #include "wendfyr/domain/commands/i_command.hpp"
+#include "wendfyr/fwd.hpp"
 
 #include <filesystem>
 #include <string>
 #include <vector>
-namespace wendfyr::ports::driven
-{
-    class IFilesystemService;
-};
-
-namespace wendfyr::services
-{
-    class EventBus;
-}
 
 namespace wendfyr::domain::commands
 {
     class CopyCommand final : public ICommand
     {
       public:
-        CopyCommand(std::vector<std::filesystem::path> sources, std::filesystem::path destination,
-                    ports::driven::IFilesystemService& fs, services::EventBus& event_bus);
+        CopyCommand(std::vector<std::filesystem::path> sources,
+                    std::filesystem::path destination,
+                    ports::driven::IFilesystemService& fs,
+                    services::EventBus& event_bus);
 
         void execute() override;
         void undo() override;

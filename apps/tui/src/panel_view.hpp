@@ -1,6 +1,8 @@
 #ifndef WENDFYR_TUI_PANEL_VIEW_HPP
 #define WENDFYR_TUI_PANEL_VIEW_HPP
 
+#include "wendfyr/fwd.hpp"
+
 #include <cstddef>
 #include <filesystem>
 #include <string>
@@ -12,16 +14,6 @@ namespace ftxui
     using Element = std::shared_ptr<Node>;
     using Elements = std::vector<Element>;
 };  // namespace ftxui
-
-namespace wendfyr::domain::models
-{
-    struct FileEntry;
-};
-
-namespace wendfyr::ports::driving
-{
-    class IPanelModel;
-};
 
 namespace wendfyr::tui
 {
