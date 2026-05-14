@@ -7,6 +7,7 @@ set(WF_CORE_SOURCES
     src/domain/command_executor.cpp
     src/domain/command_factory.cpp
     src/domain/panel_model.cpp
+    src/domain/path.cpp
 
     #Domain concrete commands
     src/domain/commands/copy_command.cpp
@@ -73,6 +74,7 @@ if(BUILD_TESTING)
         tests/unit/move_command_test.cpp
         tests/unit/delete_command_test.cpp
         tests/unit/create_directory_command_test.cpp
+        tests/unit/path_test.cpp
     )
 
     target_include_directories(wf_core_test

@@ -49,7 +49,7 @@ namespace wendfyr::domain
         auto clean{trimTrailingSeparator(_path)};
         auto pos{clean.rfind(SEPARATOR)};
 
-        if (pos != std::string::npos)
+        if (pos == std::string::npos)
         {
             return {clean};
         }

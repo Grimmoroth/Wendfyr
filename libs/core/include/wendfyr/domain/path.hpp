@@ -1,4 +1,4 @@
-#ifndef WENDFYR_DOMAN_PATH_HPP
+#ifndef WENDFYR_DOMAIN_PATH_HPP
 #define WENDFYR_DOMAIN_PATH_HPP
 
 #include <string>
